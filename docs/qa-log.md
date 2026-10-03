@@ -109,3 +109,19 @@ Bugs fixed along the way:
 
 Real Chrome, first visit: intro cleared at 5.3 s, 61 fps with the new scene.
 `tools/check.mjs`: 158/158.
+
+## 2026-10-03 — hero lighting, second pass
+
+Fakhrul's crop showed a flat grey card, a blown-out white chip and no contrast. Causes and fixes:
+- **No contrast.** AgX tone mapping compressed everything to mid-grey, so the hero now uses ACES.
+- **Flat grey card.** A large, even front fill made the card reflect uniform grey. The environment
+  is now a black room with narrow, bright bars separated by dark gaps: two overhead, two vertical,
+  a horizon bar behind and a low front bar aimed at the angle the plinth front reflects. Sampling
+  is by direction, so the bar's elevation had to be matched.
+- **Card finish.** Full metal, anisotropy 0.8 so highlights stretch along the brushed grain,
+  clearcoat 0.02.
+- **Blown chip.** It was mirror-smooth and reflected the key bar head-on. It is now champagne with
+  a satin roughness.
+- **Plinth.** Mirror chrome with a `Reflector` top, so the card reflects in it.
+
+Verified with zoomed crops in real Chrome. `tools/check.mjs`: see `docs/qa/check.txt`.

@@ -48,9 +48,9 @@ function brushed(ctx, w, h, base, seed = 7) {
 
 function chip(ctx, x, y, w, h) {
   const g = ctx.createLinearGradient(x, y, x + w, y + h);
-  g.addColorStop(0, '#cfccc3');
-  g.addColorStop(0.5, '#8f8c84');
-  g.addColorStop(1, '#bdbab1');
+  g.addColorStop(0, '#9c8f72');
+  g.addColorStop(0.5, '#62594a');
+  g.addColorStop(1, '#8c8068');
   roundRect(ctx, x, y, w, h, h * 0.16);
   ctx.fillStyle = g;
   ctx.fill();
@@ -150,7 +150,7 @@ async function paintFaces() {
   c.drawImage(mark, (W - mw) / 2, H * 0.48 - mh / 2, mw, mh);
   c.filter = 'none';
   c.globalAlpha = 1;
-  c.fillStyle = '#383838';
+  c.fillStyle = '#b4b4b4';
   roundRect(c, 110, H * 0.62, 230, 176, 28);
   c.fill();
 
@@ -232,12 +232,12 @@ export async function makeCard({ finish = 'brushed' } = {}) {
   const faces = await paintFaces();
   const polished = finish === 'polished';
   const shared = polished
-    ? { metalness: 0.7, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.5 }
+    ? { metalness: 1, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.35, anisotropy: 0.8, anisotropyRotation: 0 }
     : { metalness: 0.82, clearcoat: 0.7, clearcoatRoughness: 0.22, envMapIntensity: 1 };
   const materials = [
-    new THREE.MeshPhysicalMaterial({ ...shared, map: faces.front, roughnessMap: faces.rough, roughness: polished ? 0.55 : 1 }),
+    new THREE.MeshPhysicalMaterial({ ...shared, map: faces.front, roughnessMap: faces.rough, roughness: polished ? 0.42 : 1 }),
     new THREE.MeshPhysicalMaterial({ ...shared, map: faces.back, roughness: polished ? 0.3 : 0.5 }),
-    new THREE.MeshPhysicalMaterial({ ...shared, color: polished ? '#9a9a96' : '#5a5a55', roughness: polished ? 0.12 : 0.28 }),
+    new THREE.MeshPhysicalMaterial({ ...shared, anisotropy: 0, color: polished ? '#d6d6d2' : '#5a5a55', roughness: polished ? 0.06 : 0.28 }),
   ];
   const mesh = new THREE.Mesh(cardGeometry(), materials);
   mesh.name = 'ff-member-card';
@@ -248,19 +248,21 @@ export async function makeCard({ finish = 'brushed' } = {}) {
 // left, right) and a faint floor bounce. Chrome reflects crisp black and white instead of grey.
 export function softboxEnvironment(renderer) {
   const room = new THREE.Scene();
-  room.background = new THREE.Color(0x0a0a0a);
+  room.background = new THREE.Color(0x000000);
   const strip = (w, h, intensity, pos, look) => {
     const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(1, 1, 1).multiplyScalar(intensity), side: THREE.DoubleSide }));
     m.position.set(...pos);
     m.lookAt(...look);
     room.add(m);
   };
-  strip(7, 2.2, 5, [0, 5, 1], [0, 0, 0]);       // overhead key
-  strip(9, 3.5, 0.9, [0, 1.2, 6], [0, 0, 0]);    // large dim front fill, behind the viewer
-  strip(1.4, 6, 3, [-5, 1.5, 1], [0, 0, 0]);     // left strip
-  strip(1.4, 6, 2, [5, 1.5, -1], [0, 0, 0]);     // right strip
-  strip(12, 2.4, 3.5, [0, 0.9, -6], [0, 0.9, 0]); // low back panel: lights horizontal chrome
-  strip(14, 14, 0.12, [0, -4, 0], [0, 0, 0]);    // floor bounce
+  strip(8, 0.7, 9, [0, 5, 1.2], [0, 0, 0]);       // overhead key bar
+  strip(8, 0.35, 5, [0, 5, -1.4], [0, 0, 0]);     // second, thinner overhead bar
+  strip(0.7, 6, 6, [-5, 1.6, 1.5], [0, 0, 0]);    // left vertical bar
+  strip(0.45, 6, 3, [5, 1.6, -0.5], [0, 0, 0]);   // right vertical bar
+  strip(5, 0.8, 1.2, [0, 0.4, 6], [0, 0, 0]);     // small low front fill
+  strip(14, 0.5, 4, [0, 0.7, -6], [0, 0.7, 0]);   // horizon bar behind: a line across horizontal chrome
+  strip(12, 1.8, 2.2, [0, -1.0, 5.5], [0, 0, 0]);  // low front bar: a soft band across vertical chrome faces
+  strip(14, 14, 0.04, [0, -4, 0], [0, 0, 0]);     // faint floor bounce
   const pmrem = new THREE.PMREMGenerator(renderer);
   const env = pmrem.fromScene(room, 0.02).texture;
   pmrem.dispose();

@@ -71,7 +71,7 @@ const mistFrag = /* glsl */ `
     float band = smoothstep(0.08, 0.2, vUv.y) * (1.0 - smoothstep(0.2, 0.9, vUv.y));
     float edge = smoothstep(0.0, 0.18, vUv.x) * smoothstep(1.0, 0.82, vUv.x);
     float a = band * edge * smoothstep(0.3, 0.9, n) * uOpacity;
-    gl_FragColor = vec4(vec3(1.0, 0.99, 0.96) * 1.6, a);
+    gl_FragColor = vec4(vec3(1.0, 0.99, 0.96) * 2.2, a);
     #include <colorspace_fragment>
   }
 `;
@@ -79,8 +79,8 @@ const mistFrag = /* glsl */ `
 export async function initHero(canvas) {
   RectAreaLightUniformsLib.init();
   const renderer = makeRenderer(canvas, { alpha: false, clear: 0x0b0b0a, maxDpr: 2 });
-  renderer.toneMapping = THREE.AgXToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.0;
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0b0b0a);
   scene.environment = softboxEnvironment(renderer);
@@ -112,13 +112,19 @@ export async function initHero(canvas) {
   scene.add(rim);
 
   // plinth: polished chrome block on a darker base, with lit seams between the tiers
-  const chrome = new THREE.MeshPhysicalMaterial({ color: 0xdcdcda, metalness: 1, roughness: 0.14, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.6 });
-  const smoked = new THREE.MeshPhysicalMaterial({ color: 0x1a1a19, metalness: 0.85, roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.1 });
+  const chrome = new THREE.MeshPhysicalMaterial({ color: 0xcfcfcc, metalness: 1, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.4 });
+  const smoked = new THREE.MeshPhysicalMaterial({ color: 0x141413, metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 });
   const top = new THREE.Mesh(new RoundedBoxGeometry(4.6, 0.36, 2.1, 6, 0.03), chrome);
   top.position.set(0, -0.62, 0);
   const base = new THREE.Mesh(new RoundedBoxGeometry(4.5, 0.5, 2.0, 6, 0.02), smoked);
   base.position.set(0, -1.11, 0);
   scene.add(top, base);
+  const topMirror = new Reflector(new THREE.PlaneGeometry(4.5, 2.0), {
+    textureWidth: coarse ? 512 : 1024, textureHeight: coarse ? 512 : 1024, color: 0x8a8a88, clipBias: 0.002,
+  });
+  topMirror.rotation.x = -Math.PI / 2;
+  topMirror.position.set(0, -0.4385, 0);
+  scene.add(topMirror);
   const seamMat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
   for (const [y, w] of [[-0.442, 4.56], [-0.803, 4.56], [-1.35, 4.5]]) {
     const seam = new THREE.Mesh(new THREE.BoxGeometry(w, 0.007, 0.007), seamMat);
