@@ -55,3 +55,35 @@ gave 11 false failures. Fixed to resolve each anchor against its own page.
 
 **Not checked.** A real-device GPU run (headless used SwiftShader), Lighthouse field numbers, and
 WebKit/Safari behaviour.
+
+## 2026-10-03 — restructure (option 2) + real-Chrome pass
+
+Fakhrul asked again for a 1:1 copy. That was declined again, and he chose option 2: follow
+moto-card.com's section order and scene types, measured rhythm (16px gutter, 52–64px headings at
+1440), with FF's own words, imagery, 3D and code.
+
+New home order:
+1. centred hero
+2. globe with tick toasts
+3. card tube with a centred close
+4. figures arcs (light)
+5. support with clocks
+6. oval reveal
+7. numbered "covers" list
+8. plans banner
+9. plans
+10. grouped FAQ (light)
+11. footer
+
+Fonts, palette and type voice stay FF's.
+
+The pass ran in Claude in Chrome (tab fronted, `visibilityState: visible`, 1920×907), scrolling with
+the real wheel. Fixed:
+- the globe's empty tail (pin 350→270svh)
+- the dark gap before the tube (tiles fade in at 2% of the section, was 12%)
+- figures crossing the heading (solid backing, rows bow outward)
+- the oval opening on the grid's gutter cross (now a single plated shot)
+- the double gap between plans and FAQ
+- the oversized footer mark
+
+`tools/check.mjs` passed 158/158 after the restructure. The phone strip at 390 is clean.

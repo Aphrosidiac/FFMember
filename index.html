@@ -56,26 +56,19 @@
       <section class="hero" id="top" aria-labelledby="hero-title">
         <canvas class="hero__gl" data-hero-gl aria-hidden="true"></canvas>
         <div class="hero__shade" aria-hidden="true"></div>
-        <div class="hero__inner wrap">
-          <p class="eyebrow eyebrow--lime hero__eyebrow" data-hero-in>Managed care for FF-built websites</p>
+        <div class="hero__head wrap">
+          <p class="eyebrow eyebrow--lime" data-hero-in>Managed care for FF-built websites</p>
           <h1 class="h-display hero__title" id="hero-title" data-hero-title>
             <span class="hero__line">Kept in care,</span>
             <span class="hero__line serif">every month.</span>
           </h1>
-          <div class="hero__side" data-hero-in>
-            <p class="lead">Hosting, upkeep and small changes for the sites we build — so launch day is the start of the work, not the end of it.</p>
-            <div class="hero__ctas">
-              <button class="btn" type="button" data-join>
-                Become a member
-                <svg class="btn__arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
-              </button>
-              <a class="btn btn--ghost" href="#plans" data-scroll>From RM59 a month</a>
-            </div>
-          </div>
         </div>
         <div class="hero__foot wrap" data-hero-in>
-          <span class="small muted">Care · Maintain · Evolve</span>
-          <span class="hero__scroll small muted"><i></i>Scroll</span>
+          <button class="btn" type="button" data-join>
+            Become a member
+            <svg class="btn__arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+          </button>
+          <p class="small muted">Care · Maintain · Evolve — from RM59 a month</p>
         </div>
       </section>
 
@@ -86,24 +79,17 @@
           <div class="globe__pin" data-globe-pin aria-hidden="true">
             <i></i><span>FF Dev Studio<br /><em>Kuala Lumpur</em></span>
           </div>
-          <ul class="globe__chips" data-globe-chips aria-label="Included in every plan">
-            <li style="--x: -34; --y: -2">Managed hosting</li>
-            <li style="--x: 31; --y: -6">SSL &amp; CDN</li>
-            <li style="--x: -18; --y: 12">Uptime monitoring</li>
-            <li style="--x: 22; --y: 16">Backups</li>
-            <li style="--x: -40; --y: 22">Security updates</li>
-            <li style="--x: 40; --y: 26">Defect fixes</li>
-          </ul>
-          <div class="globe__copy wrap">
-            <div class="globe__a" data-globe-a>
-              <p class="eyebrow">01 — Care</p>
-              <h2 class="h1" id="globe-title">Built in Kuala Lumpur. <span class="serif">Kept online</span> wherever your customers are.</h2>
-            </div>
-            <div class="globe__b" data-globe-b>
-              <p class="lead">Every plan starts with the same floor: managed hosting, SSL and a CDN, uptime monitoring, backups, security and dependency updates, and fixes for anything we delivered that breaks.</p>
-              <a class="btn btn--ghost" href="#plans" data-scroll>Compare the plans</a>
-            </div>
+          <div class="globe__head wrap" data-globe-a>
+            <h2 class="h1" id="globe-title">Built in Kuala Lumpur. <span class="serif">Kept online everywhere.</span></h2>
+            <p class="lead">Hosting, SSL, a CDN, monitoring, backups and security updates come with every plan — so the site keeps working while you get on with the business.</p>
+            <a class="btn" href="#plans" data-scroll>Compare the plans</a>
           </div>
+          <ul class="globe__toasts" data-globe-chips aria-label="Work a plan does in the background">
+            <li style="--x: -30; --y: -4"><i aria-hidden="true"></i>Backup completed</li>
+            <li style="--x: 24; --y: -12"><i aria-hidden="true"></i>SSL certificate renewed</li>
+            <li style="--x: 6; --y: 10"><i aria-hidden="true"></i>Security update applied</li>
+            <li style="--x: -12; --y: 24"><i aria-hidden="true"></i>Price change published</li>
+          </ul>
         </div>
       </section>
 
@@ -113,45 +99,107 @@
           <canvas class="tube__gl" data-tube-gl aria-hidden="true"></canvas>
           <div class="tube__fade" aria-hidden="true"></div>
           <div class="tube__copy wrap" data-tube-copy>
-            <p class="eyebrow">
-              02 — The card
-            </p>
             <h2 class="h1" id="tube-title">One card for every site <span class="serif">we look after.</span></h2>
             <p class="tube__rotator lead" aria-live="off">
               <span class="tube__rotator-label">It covers</span>
-              <span class="tube__words" data-rotator>
-                <span>hosting.</span><span>upkeep.</span><span>small changes.</span><span>support.</span>
-              </span>
+              <span class="tube__words" data-rotator><span>hosting.</span><span>upkeep.</span><span>small changes.</span><span>support.</span></span>
             </p>
+            <button class="btn" type="button" data-join>Become a member</button>
           </div>
-          <ol class="tube__index wrap small" aria-label="Work shown in the tube">
-            <li>Hai Awan</li><li>Sunlight Supplies</li><li>LEWIX AI</li><li>SmoothSail</li><li>Big Brain Furniture</li><li>Ascend Peptides</li><li>Lewix</li>
-          </ol>
         </div>
       </section>
 
       <!-- 04 · Numbers -->
-      <section class="numbers" aria-labelledby="numbers-title">
-        <div class="numbers__head wrap">
-          <p class="eyebrow">03 — In numbers</p>
-          <h2 class="h2" id="numbers-title">Plain terms, <span class="serif">written down.</span></h2>
+      <section class="figures" aria-labelledby="figures-title" data-figures>
+        <div class="figures__arc figures__arc--left" aria-hidden="true" data-arc="left"></div>
+        <div class="figures__arc figures__arc--right" aria-hidden="true" data-arc="right"></div>
+        <div class="figures__sticky">
+          <div class="figures__head wrap">
+            <h2 class="h1" id="figures-title">Plain terms, <span class="serif">written down.</span></h2>
+          </div>
+          <ul class="figures__list">
+            <li>Monthly or yearly</li>
+            <li>Domains billed at cost</li>
+            <li>Every price in ringgit</li>
+          </ul>
         </div>
-        <ol class="numbers__list wrap" data-numbers>
-          <li class="numbers__row"><span class="numbers__n"><small>RM</small>59</span><span class="numbers__l">a month for Care — hosting, SSL, CDN, monitoring, backups and security.</span></li>
-          <li class="numbers__row"><span class="numbers__n"><small>RM</small>149</span><span class="numbers__l">a month for Maintain — everything in Care, plus time for changes.</span></li>
-          <li class="numbers__row"><span class="numbers__n"><small>RM</small>299</span><span class="numbers__l">a month for Evolve — everything in Maintain, plus room to improve.</span></li>
-          <li class="numbers__row"><span class="numbers__n">60<small>min</small></span><span class="numbers__l">of minor content or visual changes every month on Maintain.</span></li>
-          <li class="numbers__row"><span class="numbers__n">3<small>h</small></span><span class="numbers__l">of iterative improvements every month on Evolve.</span></li>
-          <li class="numbers__row"><span class="numbers__n">30<small>days</small></span><span class="numbers__l">of defect warranty after every launch, before a plan even starts.</span></li>
-          <li class="numbers__row"><span class="numbers__n">10<small>×</small></span><span class="numbers__l">the monthly fee for a full year. Pay yearly and two months are on us.</span></li>
-        </ol>
       </section>
 
-      <!-- 05 · Plans -->
+      <!-- 05 · Support -->
+      <section class="support" aria-labelledby="support-title">
+        <div class="support__bg" aria-hidden="true" data-parallax>
+          <figure class="support__plate"><img src="/work/smoothsail/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+        </div>
+        <div class="support__inner wrap">
+          <h2 class="h1 support__title" id="support-title">Priority support. <span class="serif">A person, not a ticket.</span></h2>
+          <ul class="support__list lead">
+            <li>Priority WhatsApp on Maintain and Evolve</li>
+            <li>A monthly health check</li>
+            <li>Fixes for anything we delivered</li>
+          </ul>
+          <dl class="support__clocks small">
+            <div><dt>Studio · Kuala Lumpur</dt><dd data-clock data-seconds></dd></div>
+            <div><dt>You · local time</dt><dd data-clock-local></dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 06 · Ellipse reveal -->
+      <section class="reveal" aria-labelledby="reveal-title" data-reveal>
+        <div class="reveal__stage">
+          <div class="reveal__window" data-reveal-window>
+            <figure class="reveal__plate" aria-hidden="true"><img src="/work/hai-awan/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+          </div>
+          <img class="reveal__mark" src="/brand/ff-mark-white.svg" alt="" width="194" height="72" aria-hidden="true" data-reveal-mark />
+          <h2 class="h1 reveal__title wrap" id="reveal-title" data-reveal-title>One plan. <span class="serif">Every page looked after.</span></h2>
+        </div>
+      </section>
+
+      <!-- 07 · What members get -->
+      <section class="covers" aria-labelledby="covers-title">
+        <div class="covers__head wrap">
+          <h2 class="h1" id="covers-title">Made for the sites <span class="serif">we already built.</span></h2>
+          <span class="small covers__count" data-covers-count>01 / 06</span>
+        </div>
+        <div class="covers__grid wrap">
+          <div class="covers__media" data-process-media aria-hidden="true">
+            <figure class="process__frame is-active"><img src="/work/hai-awan/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+            <figure class="process__frame"><img src="/work/sunlight-supplies/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+            <figure class="process__frame"><img src="/work/smoothsail/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+            <figure class="process__frame"><img src="/work/big-brain-furniture/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+            <figure class="process__frame"><img src="/work/lewix-ai/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+            <figure class="process__frame"><img src="/work/ascend-peptides/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+            <figcaption class="process__caption small" data-process-caption>Hai Awan</figcaption>
+          </div>
+          <ol class="covers__list" data-process-steps>
+            <li data-frame="0" data-name="Hai Awan"><span>01</span><h3>Hosting</h3><p>Managed hosting with SSL and a CDN, set up for the stack the site was built on.</p></li>
+            <li data-frame="1" data-name="Sunlight Supplies"><span>02</span><h3>Monitoring</h3><p>Uptime checks around the clock, so an outage reaches us before it reaches you.</p></li>
+            <li data-frame="2" data-name="SmoothSail"><span>03</span><h3>Backups</h3><p>Backups or version recovery appropriate to the stack, ready to roll back to.</p></li>
+            <li data-frame="3" data-name="Big Brain Furniture"><span>04</span><h3>Security</h3><p>Security and dependency maintenance, and fixes for defects in work we delivered.</p></li>
+            <li data-frame="4" data-name="LEWIX AI"><span>05</span><h3>Changes</h3><p>Up to 60 minutes a month on Maintain, three hours on Evolve, for edits and improvements.</p></li>
+            <li data-frame="5" data-name="Ascend Peptides"><span>06</span><h3>Advice</h3><p>On Evolve, an analytics review and one improvement recommendation every quarter.</p></li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 08 · Plans banner + plans -->
+      <section class="banner" aria-labelledby="banner-title">
+        <div class="banner__bg" aria-hidden="true" data-parallax>
+          <figure class="support__plate"><img src="/work/big-brain-furniture-alt/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
+        </div>
+        <div class="banner__inner wrap">
+          <p class="eyebrow eyebrow--lime">Membership</p>
+          <h2 class="h1" id="banner-title">Three plans. <span class="serif">One standard.</span></h2>
+          <p class="lead">Start with Care and move up when the site needs more of our time. Pay yearly and two months are on us.</p>
+          <a class="btn" href="#plans" data-scroll>See the plans</a>
+        </div>
+      </section>
+
+      <!-- 09 · Plans -->
       <section class="plans" id="plans" aria-labelledby="plans-title">
         <div class="plans__head wrap">
           <div>
-            <p class="eyebrow">04 — Plans</p>
+            <p class="eyebrow">Plans</p>
             <h2 class="h1" id="plans-title">Choose how much <span class="serif">we carry.</span></h2>
           </div>
           <div class="plans__toggle">
@@ -221,95 +269,54 @@
         <p class="plans__fine wrap small muted">Maintenance time does not roll over. New pages, redesigns, new features, campaign production, extensive content and third-party usage costs are quoted separately. Domain fees are billed at cost.</p>
       </section>
 
-      <!-- 06 · Work marquee -->
-      <section class="marquee" aria-label="Sites FF Dev Studio has built">
-        <div class="marquee__meta wrap small muted">
-          <span>Work we have shipped</span>
-          <span><span data-clock></span> · Kuala Lumpur</span>
-        </div>
-        <div class="marquee__row" data-marquee="1">
-          <div class="marquee__track">
-            <span class="marquee__item">Hai Awan<img src="/work/hai-awan/tile.jpg" alt="" width="1200" height="750" loading="lazy" /></span>
-            <span class="marquee__item serif">Sunlight Supplies<img src="/work/sunlight-supplies/tile.jpg" alt="" width="1200" height="750" loading="lazy" /></span>
-            <span class="marquee__item">LEWIX AI<img src="/work/lewix-ai/tile.jpg" alt="" width="1200" height="750" loading="lazy" /></span>
-            <span class="marquee__item serif">SmoothSail<img src="/work/smoothsail/tile.jpg" alt="" width="1200" height="750" loading="lazy" /></span>
-          </div>
-        </div>
-        <div class="marquee__row" data-marquee="-1">
-          <div class="marquee__track">
-            <span class="marquee__item serif">Big Brain Furniture<img src="/work/big-brain-furniture/tile.jpg" alt="" width="1200" height="750" loading="lazy" /></span>
-            <span class="marquee__item">Ascend Peptides<img src="/work/ascend-peptides/tile.jpg" alt="" width="1200" height="750" loading="lazy" /></span>
-            <span class="marquee__item serif">Lewix<img src="/work/lewix-my/tile.jpg" alt="" width="1200" height="750" loading="lazy" /></span>
-            <span class="marquee__item">Big Brain, second direction<img src="/work/big-brain-furniture-alt/tile.jpg" alt="" width="1200" height="750" loading="lazy" /></span>
-          </div>
-        </div>
-      </section>
-
-      <!-- 07 · Process -->
-      <section class="process" aria-labelledby="process-title">
-        <div class="process__grid wrap">
-          <div class="process__media" data-process-media aria-hidden="true">
-            <figure class="process__frame is-active"><img src="/work/hai-awan/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
-            <figure class="process__frame"><img src="/work/sunlight-supplies/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
-            <figure class="process__frame"><img src="/work/smoothsail/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
-            <figure class="process__frame"><img src="/work/big-brain-furniture/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
-            <figure class="process__frame"><img src="/work/lewix-ai/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
-            <figcaption class="process__caption small" data-process-caption>Hai Awan</figcaption>
-          </div>
-          <div class="process__body">
-            <p class="eyebrow">05 — How a site gets here</p>
-            <h2 class="h2" id="process-title">Membership begins <span class="serif">where the build ends.</span></h2>
-            <ol class="process__steps" data-process-steps>
-              <li data-frame="0" data-name="Hai Awan"><span>01</span><div><h3>Enquiry</h3><p>The business, the goal, references, functions, content readiness, budget and a target date.</p></div></li>
-              <li data-frame="0" data-name="Hai Awan"><span>02</span><div><h3>Fit and scope</h3><p>The smallest scope that can reach a strong result — and a clear no when it cannot meet the standard.</p></div></li>
-              <li data-frame="1" data-name="Sunlight Supplies"><span>03</span><div><h3>Written proposal</h3><p>Deliverables, exclusions, timeline, ownership, hosting, revision rules and price, in writing.</p></div></li>
-              <li data-frame="1" data-name="Sunlight Supplies"><span>04</span><div><h3>Deposit</h3><p>Work starts once half the fee and the content it needs have arrived.</p></div></li>
-              <li data-frame="2" data-name="SmoothSail"><span>05</span><div><h3>Direction and build</h3><p>The intended experience is shown first, then designed and built.</p></div></li>
-              <li data-frame="2" data-name="SmoothSail"><span>06</span><div><h3>Three revision rounds</h3><p>Feedback consolidated per round. New scope is quoted separately.</p></div></li>
-              <li data-frame="3" data-name="Big Brain Furniture"><span>07</span><div><h3>QA and approval</h3><p>Content, responsiveness, forms, performance and launch configuration, tested.</p></div></li>
-              <li data-frame="3" data-name="Big Brain Furniture"><span>08</span><div><h3>Final payment</h3><p>The second half, due before public launch or handoff.</p></div></li>
-              <li data-frame="4" data-name="LEWIX AI"><span>09</span><div><h3>Launch and care</h3><p>Launch on managed hosting, a 30-day defect warranty — and then the membership takes over.</p></div></li>
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      <!-- 08 · FAQ -->
+      <!-- 10 · FAQ -->
       <section class="faq" id="faq" aria-labelledby="faq-title">
-        <div class="faq__grid wrap">
-          <div class="faq__intro">
-            <p class="eyebrow">06 — Questions</p>
-            <h2 class="h2" id="faq-title">Before you <span class="serif">sign up.</span></h2>
-            <p class="lead">Anything not answered here: <a class="link" href="mailto:hello@ffdev.studio">hello@ffdev.studio</a></p>
-          </div>
-          <div class="faq__list" data-accordion>
-            <div class="faq__item">
-              <h3><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-1" id="faq-1-q">Do I have to host with FF?<i aria-hidden="true"></i></button></h3>
+        <div class="faq__top wrap">
+          <h2 class="h1" id="faq-title">Before you <span class="serif">sign up.</span></h2>
+          <p class="lead">Anything not answered here: <a class="link" href="mailto:hello@ffdev.studio">hello@ffdev.studio</a></p>
+        </div>
+        <div class="faq__groups wrap" data-accordion>
+          <div class="faq__group">
+            <h3 class="faq__cat small">Membership</h3>
+            <div class="faq__list">
+              <div class="faq__item">
+              <h4><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-1" id="faq-1-q">Do I have to host with FF?<i aria-hidden="true"></i></button></h4>
               <div class="faq__a" id="faq-1" role="region" aria-labelledby="faq-1-q" hidden><div><p>No. Managed hosting is what we recommend, because it lets us look after the whole site end to end — but it is not required. If you host elsewhere, we hand the site over as agreed in the proposal.</p></div></div>
             </div>
-            <div class="faq__item">
-              <h3><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-2" id="faq-2-q">Does unused time roll over?<i aria-hidden="true"></i></button></h3>
-              <div class="faq__a" id="faq-2" role="region" aria-labelledby="faq-2-q" hidden><div><p>No. The 60 minutes on Maintain and the three hours on Evolve are for that month. Keeping it that way is what lets us promise priority scheduling.</p></div></div>
-            </div>
-            <div class="faq__item">
-              <h3><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-3" id="faq-3-q">What counts as a “minor change”?<i aria-hidden="true"></i></button></h3>
-              <div class="faq__a" id="faq-3" role="region" aria-labelledby="faq-3-q" hidden><div><p>Content and visual adjustments to pages that already exist: new text, swapped images, a corrected price, a tidied section. New pages, redesigns, new features, campaign production and extensive content are quoted separately.</p></div></div>
-            </div>
-            <div class="faq__item">
-              <h3><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-4" id="faq-4-q">Who pays for the domain?<i aria-hidden="true"></i></button></h3>
-              <div class="faq__a" id="faq-4" role="region" aria-labelledby="faq-4-q" hidden><div><p>You do, at cost — domain fees are billed separately from the plan, with no markup. Third-party usage costs work the same way.</p></div></div>
-            </div>
-            <div class="faq__item">
-              <h3><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-5" id="faq-5-q">What happens if something breaks?<i aria-hidden="true"></i></button></h3>
+              <div class="faq__item">
+              <h4><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-5" id="faq-5-q">What happens if something breaks?<i aria-hidden="true"></i></button></h4>
               <div class="faq__a" id="faq-5" role="region" aria-labelledby="faq-5-q" hidden><div><p>Every launch comes with a 30-day defect warranty. After that, fixes for defects in FF-delivered work are part of every plan, Care included.</p></div></div>
             </div>
-            <div class="faq__item">
-              <h3><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-6" id="faq-6-q">Is there a plan for a busy online shop?<i aria-hidden="true"></i></button></h3>
+            </div>
+          </div>
+          <div class="faq__group">
+            <h3 class="faq__cat small">Costs</h3>
+            <div class="faq__list">
+              <div class="faq__item">
+              <h4><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-4" id="faq-4-q">Who pays for the domain?<i aria-hidden="true"></i></button></h4>
+              <div class="faq__a" id="faq-4" role="region" aria-labelledby="faq-4-q" hidden><div><p>You do, at cost — domain fees are billed separately from the plan, with no markup. Third-party usage costs work the same way.</p></div></div>
+            </div>
+              <div class="faq__item">
+              <h4><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-7" id="faq-7-q">Can I pay yearly?<i aria-hidden="true"></i></button></h4>
+              <div class="faq__a" id="faq-7" role="region" aria-labelledby="faq-7-q" hidden><div><p>Yes. A year costs ten times the monthly fee — RM590, RM1,490 or RM2,990 — so two months are free.</p></div></div>
+            </div>
+              <div class="faq__item">
+              <h4><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-6" id="faq-6-q">Is there a plan for a busy online shop?<i aria-hidden="true"></i></button></h4>
               <div class="faq__a" id="faq-6" role="region" aria-labelledby="faq-6-q" hidden><div><p>High-usage commerce or special infrastructure can need more than the standard plans cover. In that case we quote a custom care price instead of squeezing it into one of the three.</p></div></div>
             </div>
-            <div class="faq__item">
-              <h3><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-7" id="faq-7-q">Can I pay yearly?<i aria-hidden="true"></i></button></h3>
-              <div class="faq__a" id="faq-7" role="region" aria-labelledby="faq-7-q" hidden><div><p>Yes. A year costs ten times the monthly fee — RM590, RM1,490 or RM2,990 — so two months are free.</p></div></div>
+            </div>
+          </div>
+          <div class="faq__group">
+            <h3 class="faq__cat small">Changes &amp; support</h3>
+            <div class="faq__list">
+              <div class="faq__item">
+              <h4><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-2" id="faq-2-q">Does unused time roll over?<i aria-hidden="true"></i></button></h4>
+              <div class="faq__a" id="faq-2" role="region" aria-labelledby="faq-2-q" hidden><div><p>No. The 60 minutes on Maintain and the three hours on Evolve are for that month. Keeping it that way is what lets us promise priority scheduling.</p></div></div>
+            </div>
+              <div class="faq__item">
+              <h4><button type="button" class="faq__q" aria-expanded="false" aria-controls="faq-3" id="faq-3-q">What counts as a “minor change”?<i aria-hidden="true"></i></button></h4>
+              <div class="faq__a" id="faq-3" role="region" aria-labelledby="faq-3-q" hidden><div><p>Content and visual adjustments to pages that already exist: new text, swapped images, a corrected price, a tidied section. New pages, redesigns, new features, campaign production and extensive content are quoted separately.</p></div></div>
+            </div>
             </div>
           </div>
         </div>

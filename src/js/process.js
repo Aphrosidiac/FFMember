@@ -16,6 +16,8 @@ export function initProcess() {
       fr.classList.toggle('is-past', k < f);
     });
     if (caption) caption.textContent = steps[i].dataset.name;
+    const count = document.querySelector('[data-covers-count]');
+    if (count) count.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(steps.length).padStart(2, '0');
   };
   const io = new IntersectionObserver((es) => {
     for (const e of es) if (e.isIntersecting) activate(steps.indexOf(e.target));

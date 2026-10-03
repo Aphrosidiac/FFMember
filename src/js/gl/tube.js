@@ -98,7 +98,7 @@ export async function initTube(canvas, { section, copy }) {
   if (!reduced) {
     const tl = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom bottom', scrub: 1 } });
     tl.to(S, { p: 1, ease: 'none', duration: 1 }, 0)
-      .to(fade, { value: 1, duration: 0.18, ease: 'none' }, 0.12)
+      .to(fade, { value: 1, duration: 0.14, ease: 'none' }, 0.02)
       .to(S, { cardY: 0.25, duration: 0.42, ease: 'power3.out' }, 0.18)
       .to(S, { cardTurn: 0, duration: 0.72, ease: 'power1.inOut' }, 0.2)
       .fromTo(copy, { opacity: 0, y: 50, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.16, ease: 'power2.out' }, 0.5);

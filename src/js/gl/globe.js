@@ -143,9 +143,9 @@ export async function initGlobe(canvas, { pin, section, chips, copyA, copyB }) {
   if (!reduced) {
     const tl = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 1 } });
     tl.to(S, { p: 1, ease: 'none', duration: 1 }, 0);
-    tl.to(copyA, { yPercent: -40, opacity: 0, ease: 'power2.in', duration: 0.2 }, 0.1);
+    tl.to(copyA, { yPercent: -30, opacity: 0, ease: 'power2.in', duration: 0.2 }, 0.14);
     tl.to(chips.children, { opacity: 0, y: -16, ease: 'none', duration: 0.12, stagger: { amount: 0.12, from: 'random' } }, 0.24);
-    tl.fromTo(copyB, { opacity: 0, y: 40 }, { opacity: 1, y: 0, ease: 'power3.out', duration: 0.2 }, 0.62);
+    if (copyB) tl.fromTo(copyB, { opacity: 0, y: 40 }, { opacity: 1, y: 0, ease: 'power3.out', duration: 0.2 }, 0.62);
     // chips drift in as the section is entered
     gsap.from(chips.children, { opacity: 0, scale: 0.85, duration: 1, ease: 'power3.out', stagger: { amount: 0.5, from: 'random' },
       scrollTrigger: { trigger: section, start: 'top 60%', once: true } });
@@ -169,7 +169,7 @@ export async function initGlobe(canvas, { pin, section, chips, copyA, copyB }) {
     // position and scale: a rising horizon → a settled sphere
     const s = THREE.MathUtils.lerp(big(), small(), k);
     earth.scale.setScalar(s);
-    earth.position.y = THREE.MathUtils.lerp(camera.aspect < 0.9 ? -2.1 : -1.75, camera.aspect < 0.9 ? 0.5 : -0.12, k);
+    earth.position.y = THREE.MathUtils.lerp(camera.aspect < 0.9 ? -2.3 : -2.05, camera.aspect < 0.9 ? 0.5 : -0.12, k);
     earth.rotation.x = THREE.MathUtils.lerp(0.28, 0.06, k);
     spin.rotation.y = faceKL - (1 - k) * 2.4 + idle * (1 - k);
     uniforms.uTime.value = time;

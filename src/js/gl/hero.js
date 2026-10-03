@@ -79,8 +79,9 @@ export async function initHero(canvas) {
     fit(renderer, camera, canvas);
     // keep the card a sensible share of the frame on tall phones
     const portrait = camera.aspect < 0.9;
-    camBase.set(0, portrait ? 0.9 : 0.55, portrait ? 12.5 : 8.4);
-    lookAt.y = portrait ? -0.9 : -0.55;
+    const wide = camera.aspect > 1.85 ? (camera.aspect - 1.85) * 2.2 : 0;
+    camBase.set(0, portrait ? 1.2 : 0.95, (portrait ? 12.5 : 8.4) + wide);
+    lookAt.y = portrait ? 1.25 : 0.78;
     holder.position.y = portrait ? 1.0 : 0.42;
   };
   layout();

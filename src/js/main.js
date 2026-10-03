@@ -9,7 +9,8 @@ import { initReveals } from './reveal.js';
 import { initAccordion } from './accordion.js';
 import { initMarquees } from './marquee.js';
 import { initPlans } from './plans.js';
-import { initNumbers } from './numbers.js';
+import { initFigures } from './figures.js';
+import { initParallax, initReveal, initLocalClock } from './scenes.js';
 import { initProcess } from './process.js';
 import { initRotators } from './rotator.js';
 import { webglAvailable } from './gl/support.js';
@@ -59,7 +60,10 @@ async function bootHome() {
   initRotators();
   initMarquees();
   initPlans();
-  initNumbers();
+  initFigures();
+  initParallax();
+  initReveal();
+  initLocalClock();
   initProcess();
   initReveals();
 

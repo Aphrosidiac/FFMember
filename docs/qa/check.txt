@@ -153,7 +153,7 @@ Plan: Maintain · R
 PASS  join: edit details returns to the form
 PASS  join: close button closes
 PASS  join: focus stays inside the dialog
-PASS  faq: opening one closes the other  — {"one":"false","three":"true","oneHidden":true,"threeHidden":false,"h":104.5}
+PASS  faq: opening one closes the other  — {"one":"false","three":"true","oneHidden":true,"threeHidden":false,"h":100.5}
 PASS  home: no third-party requests
 PASS  menu: opens, not inert, focus on first link  — {"open":true,"exp":"true","inert":false,"focus":"Plans 01"}
 PASS  menu: link closes menu and scrolls to plans  — {"open":false,"top":0}
