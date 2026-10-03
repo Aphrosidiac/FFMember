@@ -1,0 +1,15 @@
+node_modules
+dist
+.DS_Store
+docs/reference/*/shots
+docs/reference/*/states
+docs/qa/shots
+docs/qa/states
+docs/reference/*/assets
+docs/reference/*/dom*
+docs/reference/*/raw
+docs/reference/*/js
+docs/reference/
+docs/sources/nasa/*.jpg
+docs/qa/strip*/
+docs/qa/shots*/

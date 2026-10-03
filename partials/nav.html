@@ -1,0 +1,29 @@
+<header class="nav" data-nav>
+      <a class="nav__logo" href="/" aria-label="FF Member, home">
+        <img src="/brand/ff-mark-white.svg" alt="" width="59" height="22" />
+        Member <span>by FF Dev Studio</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a class="nav__link" href="/#plans" data-scroll>Plans</a>
+        <a class="nav__link" href="/#work" data-scroll>Work</a>
+        <a class="nav__link" href="/#faq" data-scroll>Questions</a>
+        <a class="nav__link{{cur:studio}}" href="/studio/"{{aria:studio}}>Studio</a>
+      </nav>
+      <button class="btn btn--small nav__cta" type="button" data-join>Become a member</button>
+      <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu" data-burger>
+        <i><span></span><span></span></i>
+      </button>
+    </header>
+
+    <div class="menu" id="menu" data-menu>
+      <nav class="menu__links" aria-label="Mobile">
+        <a href="/#plans" data-scroll>Plans <span>01</span></a>
+        <a href="/#work" data-scroll>Work <span>02</span></a>
+        <a href="/#faq" data-scroll>Questions <span>03</span></a>
+        <a href="/studio/">Studio <span>04</span></a>
+      </nav>
+      <div class="menu__foot">
+        <button class="btn" type="button" data-join>Become a member</button>
+        <p class="small muted"><span data-clock></span> in Kuala Lumpur · hello@ffdev.studio</p>
+      </div>
+    </div>

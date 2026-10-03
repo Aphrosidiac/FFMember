@@ -1,0 +1,164 @@
+PASS  / @320 status  — 200
+PASS  / @320 no errors
+PASS  / @320 no horizontal overflow  — 320/320 
+PASS  / @375 status  — 200
+PASS  / @375 no errors
+PASS  / @375 no horizontal overflow  — 375/375 
+PASS  / @390 status  — 200
+PASS  / @390 no errors
+PASS  / @390 no horizontal overflow  — 390/390 
+PASS  / @768 status  — 200
+PASS  / @768 no errors
+PASS  / @768 no horizontal overflow  — 768/768 
+PASS  / @1024 status  — 200
+PASS  / @1024 no errors
+PASS  / @1024 no horizontal overflow  — 1024/1024 
+PASS  / @1440 status  — 200
+PASS  / @1440 no errors
+PASS  / @1440 no horizontal overflow  — 1440/1440 
+PASS  / @1920 status  — 200
+PASS  / @1920 no errors
+PASS  / @1920 no horizontal overflow  — 1920/1920 
+PASS  /studio/ @320 status  — 200
+PASS  /studio/ @320 no errors
+PASS  /studio/ @320 no horizontal overflow  — 320/320 
+PASS  /studio/ @375 status  — 200
+PASS  /studio/ @375 no errors
+PASS  /studio/ @375 no horizontal overflow  — 375/375 
+PASS  /studio/ @390 status  — 200
+PASS  /studio/ @390 no errors
+PASS  /studio/ @390 no horizontal overflow  — 390/390 
+PASS  /studio/ @768 status  — 200
+PASS  /studio/ @768 no errors
+PASS  /studio/ @768 no horizontal overflow  — 768/768 
+PASS  /studio/ @1024 status  — 200
+PASS  /studio/ @1024 no errors
+PASS  /studio/ @1024 no horizontal overflow  — 1024/1024 
+PASS  /studio/ @1440 status  — 200
+PASS  /studio/ @1440 no errors
+PASS  /studio/ @1440 no horizontal overflow  — 1440/1440 
+PASS  /studio/ @1920 status  — 200
+PASS  /studio/ @1920 no errors
+PASS  /studio/ @1920 no horizontal overflow  — 1920/1920 
+PASS  /legal/terms/ @320 status  — 200
+PASS  /legal/terms/ @320 no errors
+PASS  /legal/terms/ @320 no horizontal overflow  — 320/320 
+PASS  /legal/terms/ @375 status  — 200
+PASS  /legal/terms/ @375 no errors
+PASS  /legal/terms/ @375 no horizontal overflow  — 375/375 
+PASS  /legal/terms/ @390 status  — 200
+PASS  /legal/terms/ @390 no errors
+PASS  /legal/terms/ @390 no horizontal overflow  — 390/390 
+PASS  /legal/terms/ @768 status  — 200
+PASS  /legal/terms/ @768 no errors
+PASS  /legal/terms/ @768 no horizontal overflow  — 768/768 
+PASS  /legal/terms/ @1024 status  — 200
+PASS  /legal/terms/ @1024 no errors
+PASS  /legal/terms/ @1024 no horizontal overflow  — 1024/1024 
+PASS  /legal/terms/ @1440 status  — 200
+PASS  /legal/terms/ @1440 no errors
+PASS  /legal/terms/ @1440 no horizontal overflow  — 1440/1440 
+PASS  /legal/terms/ @1920 status  — 200
+PASS  /legal/terms/ @1920 no errors
+PASS  /legal/terms/ @1920 no horizontal overflow  — 1920/1920 
+PASS  /legal/privacy/ @320 status  — 200
+PASS  /legal/privacy/ @320 no errors
+PASS  /legal/privacy/ @320 no horizontal overflow  — 320/320 
+PASS  /legal/privacy/ @375 status  — 200
+PASS  /legal/privacy/ @375 no errors
+PASS  /legal/privacy/ @375 no horizontal overflow  — 375/375 
+PASS  /legal/privacy/ @390 status  — 200
+PASS  /legal/privacy/ @390 no errors
+PASS  /legal/privacy/ @390 no horizontal overflow  — 390/390 
+PASS  /legal/privacy/ @768 status  — 200
+PASS  /legal/privacy/ @768 no errors
+PASS  /legal/privacy/ @768 no horizontal overflow  — 768/768 
+PASS  /legal/privacy/ @1024 status  — 200
+PASS  /legal/privacy/ @1024 no errors
+PASS  /legal/privacy/ @1024 no horizontal overflow  — 1024/1024 
+PASS  /legal/privacy/ @1440 status  — 200
+PASS  /legal/privacy/ @1440 no errors
+PASS  /legal/privacy/ @1440 no horizontal overflow  — 1440/1440 
+PASS  /legal/privacy/ @1920 status  — 200
+PASS  /legal/privacy/ @1920 no errors
+PASS  /legal/privacy/ @1920 no horizontal overflow  — 1920/1920 
+PASS  /404.html @320 status  — 200
+PASS  /404.html @320 no errors
+PASS  /404.html @320 no horizontal overflow  — 320/320 
+PASS  /404.html @375 status  — 200
+PASS  /404.html @375 no errors
+PASS  /404.html @375 no horizontal overflow  — 375/375 
+PASS  /404.html @390 status  — 200
+PASS  /404.html @390 no errors
+PASS  /404.html @390 no horizontal overflow  — 390/390 
+PASS  /404.html @768 status  — 200
+PASS  /404.html @768 no errors
+PASS  /404.html @768 no horizontal overflow  — 768/768 
+PASS  /404.html @1024 status  — 200
+PASS  /404.html @1024 no errors
+PASS  /404.html @1024 no horizontal overflow  — 1024/1024 
+PASS  /404.html @1440 status  — 200
+PASS  /404.html @1440 no errors
+PASS  /404.html @1440 no horizontal overflow  — 1440/1440 
+PASS  /404.html @1920 status  — 200
+PASS  /404.html @1920 no errors
+PASS  /404.html @1920 no horizontal overflow  — 1920/1920 
+PASS  link /  — 200
+PASS  link /#plans  — 200
+PASS  link /#work  — 200
+PASS  link /#faq  — 200
+PASS  link /studio/  — 200
+PASS  link /studio/#work  — 200
+PASS  link /legal/terms/  — 200
+PASS  link /legal/privacy/  — 200
+PASS  link /#main  — 200
+PASS  link /#plans  — 200
+PASS  link /#top  — 200
+PASS  link /studio/#main  — 200
+PASS  link /studio/#top  — 200
+PASS  link /legal/terms/#main  — 200
+PASS  link /legal/terms/#plans  — 200
+PASS  link /legal/terms/#included  — 200
+PASS  link /legal/terms/#excluded  — 200
+PASS  link /legal/terms/#time  — 200
+PASS  link /legal/terms/#billing  — 200
+PASS  link /legal/terms/#hosting  — 200
+PASS  link /legal/terms/#warranty  — 200
+PASS  link /legal/terms/#contact  — 200
+PASS  link /legal/terms/#top  — 200
+PASS  link /legal/privacy/#main  — 200
+PASS  link /legal/privacy/#short  — 200
+PASS  link /legal/privacy/#site  — 200
+PASS  link /legal/privacy/#form  — 200
+PASS  link /legal/privacy/#email  — 200
+PASS  link /legal/privacy/#rights  — 200
+PASS  link /legal/privacy/#top  — 200
+PASS  link /404.html#main  — 200
+PASS  external links are FF-owned or contact  — mailto:hello@ffdev.studio https://ffdev.studio tel:+60139078719 https://awan.ffdev.studio/ https://ff-sunlight.pages.dev/ https://lewix.ai/ https://smoothsail.my/ https://bbf.lewix.ai/
+PASS  yearly prices  — 590 / 1,490 / 2,990
+PASS  yearly period label  — / year
+PASS  monthly prices  — 59 / 149 / 299
+PASS  plan modal: Maintain fees  — {"open":true,"name":"Maintain","m":"RM149 / month","y":"RM1,490 / year","s":"RM298","items":4}
+PASS  plan modal: Escape closes and returns focus  — {"open":false,"focus":"maintain"}
+PASS  plan modal → join form carries the plan  — {"join":true,"plan":"evolve"}
+PASS  join: empty submit shows errors and focuses first  — {"errs":4,"consent":"Please agree so we can reply.","focus":"j-name","step":true}
+PASS  join: invalid email and site refused  — {"email":"That email does not look complete.","site":"Use a web address like example.com."}
+PASS  join: success step with summary  — Name<img src=x onerror=alert(1)> | Emailperson@example.com | Websiteexample.com | PlanMaintain · RM1,490 / year | BillingYearly | NoteLine one
+Line two & more
+PASS  join: hostile name rendered as text
+PASS  join: email draft to hello@ffdev.studio with plan and yearly price  — mailto:hello@ffdev.studio?subject=FF Member — Maintain&body=Name: <img src=x onerror=alert(1)>
+Email: person@example.com
+Website: example.com
+Plan: Maintain · R
+PASS  join: edit details returns to the form
+PASS  join: close button closes
+PASS  join: focus stays inside the dialog
+PASS  faq: opening one closes the other  — {"one":"false","three":"true","oneHidden":true,"threeHidden":false,"h":104.5}
+PASS  home: no third-party requests
+PASS  menu: opens, not inert, focus on first link  — {"open":true,"exp":"true","inert":false,"focus":"Plans 01"}
+PASS  menu: link closes menu and scrolls to plans  — {"open":false,"top":0}
+PASS  reduced motion: no intro, no smooth scroll  — {"intro":false,"lenis":false}
+PASS  reduced motion: no text left invisible
+PASS  intro: plays on first visit and is removed  — {"gone":true,"seen":"1","navOpacity":"1","title":"1"}
+
+158/158 passed

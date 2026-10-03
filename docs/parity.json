@@ -1,0 +1,22 @@
+[
+  {"id":"P-01","surface":"global","feature":"Intro: FF mark, KL clock, progress, curtain; once per session","status":"done","evidence":"check.mjs intro test 2026-10-03; lag-smoothing bug fixed","notes":""},
+  {"id":"P-02","surface":"global","feature":"Nav: hide on scroll down, backing past hero, current section, desktop + phone menu","status":"done","evidence":"strip 1440/390 + check.mjs menu tests 2026-10-03","notes":""},
+  {"id":"P-03","surface":"home","feature":"Hero WebGL: FF card over plinth, pointer lean, scroll tip","status":"done","evidence":"shots-prod/index-top-1440 + strip frames 2026-10-03","notes":"Motion judged in headless frames only; not yet eyeballed on a real GPU"},
+  {"id":"P-04","surface":"home","feature":"Pinned globe: NASA textures, own GLSL day/night/clouds/glint/limb, KL pin, chips, copy hand-over","status":"done","evidence":"strip 1440/390 2026-10-03","notes":""},
+  {"id":"P-05","surface":"home","feature":"Tube of plated FF work tiles + card revolution + word rotator","status":"done","evidence":"strip 1440/390 2026-10-03","notes":""},
+  {"id":"P-06","surface":"home","feature":"Scroll-scrubbed numerals (verified FF facts only)","status":"done","evidence":"strip 1440/390 2026-10-03","notes":""},
+  {"id":"P-07","surface":"home","feature":"Plans with monthly/yearly toggle","status":"done","evidence":"check.mjs price tests 2026-10-03","notes":"Prices from SERVICE_ARCHITECTURE.md"},
+  {"id":"P-08","surface":"home","feature":"Plan detail modal","status":"done","evidence":"check.mjs fee + focus tests 2026-10-03","notes":""},
+  {"id":"P-09","surface":"home","feature":"Join modal: validation, summary, mailto draft, no network","status":"done","evidence":"check.mjs join tests + zero third-party requests 2026-10-03","notes":"No backend by design"},
+  {"id":"P-10","surface":"home","feature":"Work marquee with velocity push + KL clock","status":"done","evidence":"strip frames 2026-10-03","notes":""},
+  {"id":"P-11","surface":"home","feature":"Process: sticky plated frame follows active step","status":"done","evidence":"strip 1440/390 2026-10-03","notes":""},
+  {"id":"P-12","surface":"home","feature":"FAQ accordion, one open, a11y","status":"done","evidence":"check.mjs faq test 2026-10-03","notes":""},
+  {"id":"P-13","surface":"global","feature":"Footer: CTA, columns, live clock, legal","status":"done","evidence":"strip frames + link checks 2026-10-03","notes":""},
+  {"id":"P-14","surface":"studio","feature":"Studio page: hero, FF work grid, principles","status":"done","evidence":"capture top 1440/390 + overflow checks 2026-10-03","notes":""},
+  {"id":"P-15","surface":"legal","feature":"Terms + privacy, true for this build","status":"done","evidence":"capture + anchor checks 2026-10-03","notes":"Not reviewed by a lawyer"},
+  {"id":"P-16","surface":"global","feature":"404 page","status":"done","evidence":"capture 1440/390 2026-10-03","notes":""},
+  {"id":"P-17","surface":"global","feature":"Reduced motion","status":"done","evidence":"check.mjs reduced-motion tests 2026-10-03","notes":""},
+  {"id":"P-18","surface":"global","feature":"SEO: titles, descriptions, OG, JSON-LD Service offers","status":"partial","evidence":"present in HTML 2026-10-03","notes":"/og.jpg referenced but not yet made; canonical assumes ffdev.studio/member/"},
+  {"id":"P-19","surface":"global","feature":"Real-device GPU, Safari, Lighthouse","status":"deferred","evidence":"","notes":"Headless SwiftShader only"},
+  {"id":"P-20","surface":"reference","feature":"Exact 1:1 copy of moto-card.com","status":"omitted","evidence":"","notes":"Declined: would reproduce a third party's copyrighted site. See docs/brief.md"}
+]

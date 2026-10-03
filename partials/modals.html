@@ -1,0 +1,70 @@
+<!-- Membership modal -->
+    <div class="modal" id="join" data-modal="join" role="dialog" aria-modal="true" aria-labelledby="join-title" hidden>
+      <div class="modal__veil" data-close></div>
+      <div class="modal__panel" data-lenis-prevent>
+        <button class="modal__close" type="button" data-close aria-label="Close"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.4" /></svg></button>
+        <div data-step="form">
+          <div class="modal__head">
+            <p class="eyebrow eyebrow--lime">Membership</p>
+            <h2 class="h3" id="join-title">Become a member</h2>
+            <p class="small muted">Membership is for sites FF Dev Studio has built or is building. Tell us which one.</p>
+          </div>
+          <form class="form" novalidate data-join-form>
+            <div class="form__row">
+              <div class="field"><label for="j-name">Your name</label><input id="j-name" name="name" autocomplete="name" required /><span class="field__error" aria-live="polite"></span></div>
+              <div class="field"><label for="j-email">Email</label><input id="j-email" name="email" type="email" autocomplete="email" required /><span class="field__error" aria-live="polite"></span></div>
+            </div>
+            <div class="field"><label for="j-site">Website (if it is live)</label><input id="j-site" name="site" type="text" inputmode="url" placeholder="example.com" autocomplete="url" /><span class="field__error" aria-live="polite"></span></div>
+            <div class="form__row">
+              <div class="field">
+                <label for="j-plan">Plan</label>
+                <select id="j-plan" name="plan" required>
+                  <option value="">Choose a plan</option>
+                  <option value="care">Care — RM59 / month</option>
+                  <option value="maintain">Maintain — RM149 / month</option>
+                  <option value="evolve">Evolve — RM299 / month</option>
+                  <option value="unsure">Not sure yet</option>
+                </select>
+                <span class="field__error" aria-live="polite"></span>
+              </div>
+              <fieldset class="field">
+                <legend>Billing</legend>
+                <div class="segmented"><label><input type="radio" name="period" value="monthly" checked /><span>Monthly</span></label><label><input type="radio" name="period" value="yearly" /><span>Yearly</span></label></div>
+              </fieldset>
+            </div>
+            <div class="field"><label for="j-note">Anything we should know (optional)</label><textarea id="j-note" name="note" maxlength="1200"></textarea></div>
+            <label class="check"><input type="checkbox" name="consent" required /><span>I agree that FF Dev Studio may reply to me about this request. <a href="/legal/privacy/">Privacy</a></span></label>
+            <span class="field__error" data-consent-error aria-live="polite"></span>
+            <button class="btn" type="submit">Continue</button>
+            <p class="form__note">Nothing is sent from this page. The next step opens an email to hello@ffdev.studio that you can read before sending.</p>
+          </form>
+        </div>
+        <div class="form__done" data-step="done" hidden>
+          <p class="eyebrow eyebrow--lime">Almost there</p>
+          <h2 class="h3" tabindex="-1" data-done-title>Your request is ready to send.</h2>
+          <dl class="form__summary" data-summary></dl>
+          <a class="btn" href="mailto:hello@ffdev.studio" data-mailto>Open it in your email</a>
+          <button class="link small" type="button" data-back>Edit details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plan detail modal -->
+    <div class="modal" id="plan-detail" data-modal="plan" role="dialog" aria-modal="true" aria-labelledby="plan-title" hidden>
+      <div class="modal__veil" data-close></div>
+      <div class="modal__panel modal__panel--plan" data-lenis-prevent>
+        <button class="modal__close" type="button" data-close aria-label="Close"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.4" /></svg></button>
+        <div class="modal__head">
+          <p class="eyebrow" data-plan-eyebrow>Plan</p>
+          <h2 class="h3" id="plan-title" data-plan-name>Care</h2>
+        </div>
+        <div class="fee">
+          <div class="fee__row"><span>Monthly</span><strong data-fee-month></strong></div>
+          <div class="fee__row"><span>Yearly</span><strong data-fee-year></strong></div>
+          <div class="fee__row fee__row--save"><span>Yearly saving</span><strong data-fee-save></strong></div>
+        </div>
+        <ul class="plan__list plan__list--modal" data-plan-list></ul>
+        <p class="small muted fee__note">Maintenance time does not roll over. Domain fees are billed at cost. Prices in Malaysian ringgit.</p>
+        <button class="btn" type="button" data-plan-join>Choose this plan</button>
+      </div>
+    </div>

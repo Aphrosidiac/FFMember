@@ -1,0 +1,57 @@
+# QA log — FF Member
+
+## 2026-10-03
+
+**Decision (logged as the Gate 1 self-review).** The brief asked for an exact copy of moto-card.com.
+That was declined (see `docs/brief.md`), and an original FF site was built in the same genre instead.
+The reference snapshot in `docs/reference/2026-10-03/` (git-ignored) was used only to learn the genre.
+None of its files, code or text are in `src/`, `public/`, `partials/` or the HTML pages.
+
+**Instruments.** Headless Chromium through Playwright (`tools/browser.mjs`). The in-app browser pane
+reported `visibilityState: hidden` and a 0×0 viewport, so it was not used as evidence.
+- `tools/strip.mjs` walks a page with real wheel input and screenshots the viewport at each
+  offset. Pinned sections only exist mid-scroll.
+- `tools/check.mjs` is the functional pass.
+- `tools/capture.mjs` takes the top-of-page shots.
+
+**Visual pass, 1440 and 390, home strip plus every page top.** Defects found and fixed:
+1. The hero card and plinth covered the headline. The camera moved back, the look-at point moved down,
+   and the shade deepened.
+2. The globe's opening headline overlapped the planet. The planet now rises from lower down on an
+   in-out ease, and the headline leaves first.
+3. The word rotator went blank between words. The transitions now overlap.
+4. The plan badge said "Most chosen fit", a claim nobody can back up. It now reads "Includes monthly
+   changes".
+5. The process frame cropped the LEWIX AI shot down to "WIX". Every screenshot (process frames and tube
+   tiles) now sits inset on a graphite plate, per the FF rule against full-bleed portfolio shots.
+6. Phone: the globe chips ran off the screen edges. They are now a wrapped row near the bottom.
+7. Phone: the closing globe copy overlapped the planet. The planet now settles higher on portrait
+   screens.
+8. Phone: the tube camera moved closer.
+9. Desktop: the spotlight lit the floor behind the hero paragraph. The cone is narrower and the floor
+   darker.
+
+**Real bug found by the checker.** The intro never visibly played. On a slow GPU, compiling the hero
+scene stalled the main thread for about 2 s, and with `gsap.ticker.lagSmoothing(0)` the intro timeline
+jumped to its end. Default lag smoothing is restored, so timelines pause through stalls.
+
+**Checker bug.** The first run resolved in-page `#anchor` links on the legal pages against `/`, which
+gave 11 false failures. Fixed to resolve each anchor against its own page.
+
+**Functional pass, `tools/check.mjs`: 158/158 on dev (:3180) and 158/158 on the production build
+(`vite preview` :3181).** Output is saved in `docs/qa/check.txt` and `docs/qa/check-prod.txt`. It covers:
+- five pages × seven widths (320–1920): HTTP 200, no console or page errors, no horizontal overflow
+- every internal link and anchor
+- external links limited to FF-owned domains and FF contact details
+- billing toggle values
+- plan modal fees, Escape to close, focus return, and the hand-off to the join form
+- join form: empty submit, invalid email and site, hostile name rendered as text, success summary,
+  the mailto draft's contents, edit, close, focus trap
+- FAQ: one panel open at a time, `hidden` kept in sync
+- phone menu: open, focus, link closes it and scrolls
+- reduced motion: no intro, no Lenis, no text left invisible
+- first visit plays the intro and then removes it
+- zero third-party requests
+
+**Not checked.** A real-device GPU run (headless used SwiftShader), Lighthouse field numbers, and
+WebKit/Safari behaviour.
