@@ -159,6 +159,6 @@ PASS  menu: opens, not inert, focus on first link  — {"open":true,"exp":"true"
 PASS  menu: link closes menu and scrolls to plans  — {"open":false,"top":0}
 PASS  reduced motion: no intro, no smooth scroll  — {"intro":false,"lenis":false}
 PASS  reduced motion: no text left invisible
-FAIL  intro: plays on first visit and is removed  — {"gone":true,"seen":"1","navOpacity":"0.999","title":"0.9996"}
+FAIL  intro: plays on first visit and is removed  — {"gone":true,"seen":"1","navOpacity":"0.8369","title":"0.9395"}
 
 157/158 passed

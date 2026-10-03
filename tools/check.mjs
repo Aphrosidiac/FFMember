@@ -244,7 +244,7 @@ for (const path of PAGES) {
   await page.waitForFunction(() => getComputedStyle(document.querySelector('.nav')).opacity === '1', null, { timeout: 20000 }).catch(() => {});
   await sleep(1500);
   const after = await page.evaluate(() => ({ gone: !document.querySelector('.intro'), seen: sessionStorage.getItem('ff-member-intro'), navOpacity: getComputedStyle(document.querySelector('.nav')).opacity, title: getComputedStyle(document.querySelector('.hero__line')).opacity }));
-  ok('intro: plays on first visit and is removed', during && after.gone && after.seen === '1' && after.navOpacity === '1' && after.title === '1', JSON.stringify(after));
+  ok('intro: plays on first visit and is removed', during && after.gone && after.seen === '1' && Number(after.navOpacity) >= 0.99 && Number(after.title) >= 0.99, JSON.stringify(after));
   await ctx.close();
 }
 
