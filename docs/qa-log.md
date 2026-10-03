@@ -125,3 +125,22 @@ Fakhrul's crop showed a flat grey card, a blown-out white chip and no contrast. 
 - **Plinth.** Mirror chrome with a `Reflector` top, so the card reflects in it.
 
 Verified with zoomed crops in real Chrome. `tools/check.mjs`: see `docs/qa/check.txt`.
+
+## 2026-10-04 — robustness from the lighting pass
+
+- **Real bug, mine.** Adaptive quality declared `degraded` after `layout()` used it (TDZ), so the
+  hero init threw and the scene never built.
+- **Checker bug that let it through.** `main.js` catches scene failures as console *warnings*, and
+  the checker only counted errors, so 158/158 passed with no hero. The checker now fails on any
+  `[hero]`, `[globe]` or `[tube]` warning, and asserts the hero stamps `data-drawn` after its first
+  real frame.
+- **Adaptive quality.** If the first 40 frames give a median above 36 ms, the hero drops to pixel
+  ratio 1 and turns off both mirrors.
+- **Text entrance on CSS.** The hero text and nav entrance moved from GSAP to CSS transitions
+  (`.hero-pre` → `.hero-entering`). The compositor runs them by the clock, so they finish on time
+  even while WebGL starves the main thread.
+- **Measurement fixes in the checker.** The intro is sampled at DOMContentLoaded. The menu scroll
+  check waits for the smooth scroll to settle.
+
+`tools/check.mjs`: 159/159. Real Chrome: `drawn=1`, quality full, intro cleared, nav and headline
+at opacity 1.

@@ -27,16 +27,17 @@ async function heroIn(hero) {
   const ins = document.querySelectorAll('[data-hero-in]');
   if (reduced || !title) { hero?.playEnter?.(); return; }
   await document.fonts.ready;
-  const lines = title.querySelectorAll('.hero__line');
-  gsap.set(lines, { yPercent: 100, opacity: 0 });
-  gsap.set(ins, { opacity: 0, y: 24 });
-  gsap.set('.nav', { opacity: 0, y: -16 });
+  // The text entrance is CSS (see .hero-pre in home.css): the compositor runs it by the clock, so it
+  // lands on time even while a slow GPU keeps the main thread busy building the 3D scene.
+  const root = document.documentElement;
+  root.classList.add('hero-pre');
   return () => {
     hero?.playEnter?.();
-    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-    tl.to(lines, { yPercent: 0, opacity: 1, duration: 1.4, stagger: 0.12 }, 0.1)
-      .to(ins, { opacity: 1, y: 0, duration: 1.2, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' }, 0.45)
-      .to('.nav', { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out', clearProps: 'transform,opacity' }, 0.3);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      root.classList.add('hero-entering');
+      root.classList.remove('hero-pre');
+      setTimeout(() => root.classList.remove('hero-entering'), 2400);
+    }));
   };
 }
 

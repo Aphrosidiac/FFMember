@@ -49,6 +49,32 @@
 
 /* ---------- 01 hero: centred head, card in the middle, centred action ---------- */
 
+/* Entrance: JS adds .hero-pre (hidden start), then swaps it for .hero-entering (transitions run). */
+.hero-entering .hero__line,
+.hero-entering [data-hero-in],
+.hero-entering .nav {
+  transition:
+    opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s),
+    transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s);
+}
+.hero-pre .hero__line {
+  opacity: 0;
+  transform: translateY(45%);
+}
+.hero-pre [data-hero-in] {
+  opacity: 0;
+  transform: translateY(2.4rem);
+}
+.hero-pre .nav {
+  opacity: 0;
+  transform: translateY(-1.6rem);
+}
+.hero__line:nth-child(1) { --d: 0.1s; }
+.hero__line:nth-child(2) { --d: 0.22s; }
+.hero__head [data-hero-in] { --d: 0.05s; }
+.hero__foot[data-hero-in] { --d: 0.5s; }
+.hero-entering .nav { --d: 0.3s; }
+
 .hero {
   position: relative;
   height: 100svh;

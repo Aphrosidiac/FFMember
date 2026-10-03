@@ -178,6 +178,19 @@ export async function initHero(canvas) {
   const enter = { v: reduced ? 1 : 0 };
   const playEnter = () => gsap.to(enter, { v: 1, duration: 2.6, ease: 'power3.out' });
 
+  // Adaptive quality: if the first frames come in under ~28 fps, the two mirror passes and the high
+  // pixel ratio go, so the entrance and scrolling stay smooth on weak GPUs.
+  const samples = [];
+  let degraded = false;
+  const degrade = () => {
+    degraded = true;
+    renderer.setPixelRatio(1);
+    mirror.visible = false;
+    topMirror.visible = false;
+    smoke.material.opacity = 0.96;
+    canvas.dataset.quality = 'low';
+  };
+
   let cardY = 0.42;
   const layout = () => {
     fit(renderer, camera, canvas);
@@ -192,13 +205,23 @@ export async function initHero(canvas) {
     wall.scale.set(h * camera.aspect, h, 1);
     wall.position.y = lookAt.y;
     wallUniforms.uAspect.value.set(camera.aspect, 1);
-    renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.5 : 2));
+    if (!degraded) renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.5 : 2));
   };
   layout();
   addEventListener('resize', layout);
 
   let t = 0;
+  let last = performance.now();
   const frame = (dt) => {
+    const now = performance.now();
+    if (!degraded && samples.length < 40) {
+      samples.push(now - last);
+      if (samples.length === 40) {
+        const median = [...samples].sort((a, b) => a - b)[20];
+        if (median > 36) degrade();
+      }
+    }
+    last = now;
     t += reduced ? 0 : dt;
     pointer.x += (pointer.tx - pointer.x) * 0.05;
     pointer.y += (pointer.ty - pointer.y) * 0.05;
@@ -214,6 +237,7 @@ export async function initHero(canvas) {
     mistUniforms.uTime.value = t;
     mistUniforms.uOpacity.value = 0.35 + 0.55 * e;
     renderer.render(scene, camera);
+    if (!canvas.dataset.drawn) canvas.dataset.drawn = '1';
   };
   runWhileVisible(canvas, frame);
   frame(0);

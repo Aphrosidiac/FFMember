@@ -20,7 +20,8 @@ for (const path of PAGES) {
     const page = await ctx.newPage();
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
-    page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+    // a scene that fails is caught and logged as a warning ([hero] / [globe] / [tube]); that is a failure too
+    page.on('console', (m) => { if (m.type() === 'error' || /^\[(hero|globe|tube)\]/.test(m.text())) errors.push(m.text()); });
     const res = await page.goto(base + path, { waitUntil: 'load' });
     await sleep(1800);
     const over = await page.evaluate(() => {
@@ -75,6 +76,10 @@ for (const path of PAGES) {
   page.on('request', (r) => { if (!r.url().startsWith(base)) requests.push(r.url()); });
   await page.goto(base + '/', { waitUntil: 'load' });
   await sleep(2500);
+
+  // the hero scene must have built and rendered (it stamps data-drawn after its first frame)
+  const drew = await page.waitForFunction(() => document.querySelector('[data-hero-gl]')?.dataset.drawn === '1', null, { timeout: 20000 }).then(() => true).catch(() => false);
+  ok('hero scene built and rendered', drew);
 
   // billing toggle
   await page.click('label:has([data-billing][value="year"])');
@@ -208,7 +213,8 @@ for (const path of PAGES) {
   const m = await page.evaluate(() => ({ open: document.documentElement.classList.contains('menu-open'), exp: document.querySelector('[data-burger]').getAttribute('aria-expanded'), inert: document.querySelector('[data-menu]').inert, focus: document.activeElement?.textContent?.trim() }));
   ok('menu: opens, not inert, focus on first link', m.open && m.exp === 'true' && !m.inert && /^Plans/.test(m.focus || ''), JSON.stringify(m));
   await page.click('[data-menu] a[href="/#plans"]');
-  await sleep(2500);
+  await page.waitForFunction(() => Math.abs(document.querySelector('#plans').getBoundingClientRect().top) < 120, null, { timeout: 10000 }).catch(() => {});
+  await sleep(500);
   const after = await page.evaluate(() => ({ open: document.documentElement.classList.contains('menu-open'), top: Math.round(document.querySelector('#plans').getBoundingClientRect().top) }));
   ok('menu: link closes menu and scrolls to plans', !after.open && Math.abs(after.top) < 120, JSON.stringify(after));
   await ctx.close();
@@ -236,8 +242,7 @@ for (const path of PAGES) {
 {
   const ctx = await context(browser, { w: 1440, h: 900 });
   const page = await ctx.newPage();
-  await page.goto(base + '/', { waitUntil: 'load' });
-  await sleep(500);
+  await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
   const during = await page.evaluate(() => !!document.querySelector('.intro'));
   await page.waitForFunction(() => !document.querySelector('.intro'), null, { timeout: 30000 }).catch(() => {});
   // headless software GL is several times slower than a real GPU; let the entrance finish
