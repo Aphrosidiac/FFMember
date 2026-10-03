@@ -226,17 +226,45 @@ export function cardGeometry() {
   return groupByFacing(geo);
 }
 
-export async function makeCard() {
+// finish: 'brushed' (default, for dim scenes) or 'polished' (full metal, stronger clearcoat and
+// reflections — for the lit hero stage).
+export async function makeCard({ finish = 'brushed' } = {}) {
   const faces = await paintFaces();
-  const shared = { metalness: 0.82, clearcoat: 0.7, clearcoatRoughness: 0.22, envMapIntensity: 1 };
+  const polished = finish === 'polished';
+  const shared = polished
+    ? { metalness: 0.7, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.5 }
+    : { metalness: 0.82, clearcoat: 0.7, clearcoatRoughness: 0.22, envMapIntensity: 1 };
   const materials = [
-    new THREE.MeshPhysicalMaterial({ ...shared, map: faces.front, roughnessMap: faces.rough, roughness: 1 }),
-    new THREE.MeshPhysicalMaterial({ ...shared, map: faces.back, roughness: 0.5 }),
-    new THREE.MeshPhysicalMaterial({ ...shared, color: '#5a5a55', roughness: 0.28 }),
+    new THREE.MeshPhysicalMaterial({ ...shared, map: faces.front, roughnessMap: faces.rough, roughness: polished ? 0.55 : 1 }),
+    new THREE.MeshPhysicalMaterial({ ...shared, map: faces.back, roughness: polished ? 0.3 : 0.5 }),
+    new THREE.MeshPhysicalMaterial({ ...shared, color: polished ? '#9a9a96' : '#5a5a55', roughness: polished ? 0.12 : 0.28 }),
   ];
   const mesh = new THREE.Mesh(cardGeometry(), materials);
   mesh.name = 'ff-member-card';
   return mesh;
+}
+
+// A product-photography environment: a black room with three bright softbox strips (overhead,
+// left, right) and a faint floor bounce. Chrome reflects crisp black and white instead of grey.
+export function softboxEnvironment(renderer) {
+  const room = new THREE.Scene();
+  room.background = new THREE.Color(0x0a0a0a);
+  const strip = (w, h, intensity, pos, look) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(1, 1, 1).multiplyScalar(intensity), side: THREE.DoubleSide }));
+    m.position.set(...pos);
+    m.lookAt(...look);
+    room.add(m);
+  };
+  strip(7, 2.2, 5, [0, 5, 1], [0, 0, 0]);       // overhead key
+  strip(9, 3.5, 0.9, [0, 1.2, 6], [0, 0, 0]);    // large dim front fill, behind the viewer
+  strip(1.4, 6, 3, [-5, 1.5, 1], [0, 0, 0]);     // left strip
+  strip(1.4, 6, 2, [5, 1.5, -1], [0, 0, 0]);     // right strip
+  strip(12, 2.4, 3.5, [0, 0.9, -6], [0, 0.9, 0]); // low back panel: lights horizontal chrome
+  strip(14, 14, 0.12, [0, -4, 0], [0, 0, 0]);    // floor bounce
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const env = pmrem.fromScene(room, 0.02).texture;
+  pmrem.dispose();
+  return env;
 }
 
 export function studioEnvironment(renderer, intensity = 1) {

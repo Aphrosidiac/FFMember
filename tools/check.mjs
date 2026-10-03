@@ -240,7 +240,9 @@ for (const path of PAGES) {
   await sleep(500);
   const during = await page.evaluate(() => !!document.querySelector('.intro'));
   await page.waitForFunction(() => !document.querySelector('.intro'), null, { timeout: 30000 }).catch(() => {});
-  await sleep(4000);
+  // headless software GL is several times slower than a real GPU; let the entrance finish
+  await page.waitForFunction(() => getComputedStyle(document.querySelector('.nav')).opacity === '1', null, { timeout: 20000 }).catch(() => {});
+  await sleep(1500);
   const after = await page.evaluate(() => ({ gone: !document.querySelector('.intro'), seen: sessionStorage.getItem('ff-member-intro'), navOpacity: getComputedStyle(document.querySelector('.nav')).opacity, title: getComputedStyle(document.querySelector('.hero__line')).opacity }));
   ok('intro: plays on first visit and is removed', during && after.gone && after.seen === '1' && after.navOpacity === '1' && after.title === '1', JSON.stringify(after));
   await ctx.close();

@@ -51,11 +51,9 @@ async function bootHome() {
   const introDone = playIntro();
   await Promise.race([heroReady, new Promise((r) => setTimeout(r, 2500))]);
   await introDone;
-  if (typeof reveal === 'function') {
-    // hand the hero to the entrance once its scene exists
-    const run = () => { if (hero) hero.playEnter(); reveal(); };
-    run();
-  } else hero?.playEnter?.();
+  // The text enters now; the 3D scene enters whenever it is ready (it can take longer on a slow GPU).
+  if (typeof reveal === 'function') reveal();
+  heroReady.then(() => hero?.playEnter?.());
 
   initRotators();
   initMarquees();

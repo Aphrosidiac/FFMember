@@ -24,5 +24,7 @@ export function playIntro() {
       .to(mark, { opacity: 0, y: -20, filter: 'blur(8px)', duration: 0.6, ease: 'power2.in' })
       .to(meta, { opacity: 0, duration: 0.4 }, '<')
       .to(intro, { clipPath: 'inset(0 0 100% 0)', duration: 1.1, ease: 'expo.inOut' }, '-=0.25');
+    // On a very slow GPU frames stall and the timeline crawls; never hold the page longer than 6 s.
+    setTimeout(() => { if (tl.progress() < 1) tl.progress(1); }, 6000);
   });
 }

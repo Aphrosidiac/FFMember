@@ -87,3 +87,25 @@ the real wheel. Fixed:
 - the oversized footer mark
 
 `tools/check.mjs` passed 158/158 after the restructure. The phone strip at 390 is clean.
+
+## 2026-10-03 — hero render quality
+
+Fakhrul compared the hero side by side in Chrome and found it flat (backdrop and render quality).
+The hero stage was rebuilt with our own techniques:
+- a relief-shaded rock wall drawn in GLSL (fractal height field, slope lighting)
+- an additive mist band along the horizon
+- a `Reflector` mirror floor under a smoked sheet
+- a chrome plinth with lit seams, under `RectAreaLight` panels
+- a softbox PMREM environment (black room plus five emissive strips) so metal reflects crisp
+  gradients
+- AgX tone mapping, 2× pixel ratio on desktop (1.5× and a 512 mirror texture on touch devices)
+- a `polished` card finish
+
+Bugs fixed along the way:
+- The hero entrance never fired when the scene took more than 2.5 s to build. It now plays
+  whenever the scene is ready.
+- On a very slow GPU the intro could hold the page for 30 s or more. It is now capped at 6 s
+  wall-clock.
+
+Real Chrome, first visit: intro cleared at 5.3 s, 61 fps with the new scene.
+`tools/check.mjs`: 158/158.
