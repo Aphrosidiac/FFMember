@@ -11,7 +11,7 @@
 | P-13 | Footer: CTA, columns, live clock, legal | done | strip frames + link checks 2026-10-03 |  |
 | P-16 | 404 page | done | capture 1440/390 2026-10-03 |  |
 | P-17 | Reduced motion | done | check.mjs reduced-motion tests 2026-10-03 |  |
-| P-18 | SEO: titles, descriptions, OG, JSON-LD Service offers | partial | present in HTML 2026-10-03 | /og.jpg referenced but not yet made; canonical assumes ffdev.studio/member/ |
+| P-18 | SEO: titles, descriptions, OG, JSON-LD Service offers | done | present in HTML 2026-10-03; og.jpg + canonical 2026-10-04 | canonical and og:url point at ff-member.pages.dev (the live address); og.jpg 1200×630 cut from the hero |
 | P-19 | Real-device GPU, Safari, Lighthouse | deferred |  | Headless SwiftShader only |
 
 ## home

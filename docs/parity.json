@@ -16,7 +16,7 @@
   {"id":"P-15","surface":"legal","feature":"Terms + privacy, true for this build","status":"done","evidence":"capture + anchor checks 2026-10-03","notes":"Not reviewed by a lawyer"},
   {"id":"P-16","surface":"global","feature":"404 page","status":"done","evidence":"capture 1440/390 2026-10-03","notes":""},
   {"id":"P-17","surface":"global","feature":"Reduced motion","status":"done","evidence":"check.mjs reduced-motion tests 2026-10-03","notes":""},
-  {"id":"P-18","surface":"global","feature":"SEO: titles, descriptions, OG, JSON-LD Service offers","status":"partial","evidence":"present in HTML 2026-10-03","notes":"/og.jpg referenced but not yet made; canonical assumes ffdev.studio/member/"},
+  {"id":"P-18","surface":"global","feature":"SEO: titles, descriptions, OG, JSON-LD Service offers","status":"done","evidence":"present in HTML 2026-10-03; og.jpg + canonical 2026-10-04","notes":"canonical and og:url point at ff-member.pages.dev (the live address); og.jpg 1200×630 cut from the hero"},
   {"id":"P-19","surface":"global","feature":"Real-device GPU, Safari, Lighthouse","status":"deferred","evidence":"","notes":"Headless SwiftShader only"},
   {"id":"P-20","surface":"reference","feature":"Exact 1:1 copy of moto-card.com","status":"omitted","evidence":"","notes":"Declined: would reproduce a third party's copyrighted site. See docs/brief.md"}
 ]
