@@ -223,12 +223,12 @@
 /* ---------- 03 tube ---------- */
 
 .tube {
-  /* slides up over the globe's last stretch: the planet sinks while the card rises out of it */
+  /* transparent, and slides up over the globe's last stretch: the edge-on card rises in front
+     of the sinking planet; the tiles and the dark vignette only arrive once the planet has gone */
   position: relative;
   z-index: 2;
-  margin-top: -50svh;
+  margin-top: -75svh;
   height: 320svh;
-  background: var(--ink);
 }
 .tube__stage {
   position: sticky;
@@ -246,6 +246,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  opacity: 0;
   background:
     linear-gradient(var(--ink) 0%, transparent 16%, transparent 56%, rgba(11, 11, 10, 0.9) 80%, var(--ink) 100%),
     radial-gradient(70% 60% at 50% 45%, transparent 40%, rgba(11, 11, 10, 0.55) 100%);

@@ -36,10 +36,10 @@ function plate(c, img) {
 }
 
 export async function initTube(canvas, { section, copy }) {
-  const renderer = makeRenderer(canvas, { alpha: false, clear: 0x0b0b0a, maxDpr: 1.5 });
+  const vignette = section.querySelector('.tube__fade');
+  const renderer = makeRenderer(canvas, { alpha: true, maxDpr: 1.5 });
   renderer.toneMappingExposure = 1.0;
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0b0b0a);
   scene.fog = new THREE.Fog(0x0b0b0a, 7, 22);
   scene.environment = studioEnvironment(renderer);
   scene.environmentIntensity = 0.7;
@@ -100,10 +100,10 @@ export async function initTube(canvas, { section, copy }) {
   if (!reduced) {
     const tl = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom bottom', scrub: 1 } });
     tl.to(S, { p: 1, ease: 'none', duration: 1 }, 0)
-      .to(fade, { value: 1, duration: 0.14, ease: 'none' }, 0.02)
-      .to(S, { cardY: 0.25, duration: 0.16, ease: 'power2.out' }, 0)
-      .to(S, { cardTurn: 0, duration: 0.6, ease: 'power1.inOut' }, 0.12)
-      .fromTo(copy, { opacity: 0, y: 50, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.14, ease: 'power2.out' }, 0.44);
+      .to(fade, { value: 1, duration: 0.14, ease: 'none' }, 0.24)
+      .to(S, { cardY: 0.25, duration: 0.3, ease: 'power2.out' }, 0)
+      .to(S, { cardTurn: 0, duration: 0.5, ease: 'power1.inOut' }, 0.26)
+      .fromTo(copy, { opacity: 0, y: 50, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.12, ease: 'power2.out' }, 0.62);
   } else {
     Object.assign(S, { p: 0.6, cardY: 0.25, cardTurn: 0 });
   }
@@ -132,6 +132,7 @@ export async function initTube(canvas, { section, copy }) {
       r.group.rotation.y = r.dir * (angle * r.speed + p * (i % 2 ? 1.6 : 0.6));
       for (const t of r.group.children) t.material.opacity = fade.value;
     }
+    if (vignette) vignette.style.opacity = String(fade.value);
     holder.position.y = S.cardY + Math.sin(performance.now() / 1100) * 0.04;
     holder.rotation.set(-0.08, S.cardTurn, Math.PI / 2 * 0 + 0.0);
     card.rotation.z = 0;

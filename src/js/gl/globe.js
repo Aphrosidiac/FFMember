@@ -61,6 +61,8 @@ const frag = /* glsl */ `
     float fres = pow(1.0 - max(dot(N, V), 0.0), 2.6);
     vec3 limb = mix(uLimbDusk, uLimbDay, smoothstep(-0.3, 0.6, ndl));
     col += limb * fres * smoothstep(-0.45, 0.35, ndl) * 1.1;
+    // dawn: the sun sits just behind the planet, so the crest of the visible cap catches a white glare
+    col += vec3(1.0, 0.97, 0.92) * smoothstep(-0.05, 0.4, ndl) * pow(fres, 1.4) * 1.6;
 
     gl_FragColor = vec4(col, uOpacity);
     #include <tonemapping_fragment>
@@ -113,11 +115,11 @@ export async function initGlobe(canvas, { section, chips }) {
   const [day, night, data] = await Promise.all([load('/globe/day.webp', true), load('/globe/night.webp', true), load('/globe/data.webp', false)]);
 
   // sun behind and above: the face toward us is night (city lights), dawn rims the top edge
-  const sun = new THREE.Vector3(0.1, 0.38, -0.92).normalize();
+  const sun = new THREE.Vector3(0.0, 0.3, -0.95).normalize();
   const uniforms = {
     uDay: { value: day }, uNight: { value: night }, uData: { value: data },
     uSun: { value: sun }, uTime: { value: 0 }, uOpacity: { value: 1 },
-    uLimbDay: { value: new THREE.Color('#a9bccf') }, uLimbDusk: { value: new THREE.Color('#33507f') },
+    uLimbDay: { value: new THREE.Color('#9cc2ff') }, uLimbDusk: { value: new THREE.Color('#1b3f8f') },
   };
   const geo = new THREE.SphereGeometry(1, 128, 96);
   const planet = new THREE.Mesh(geo, new THREE.ShaderMaterial({ vertexShader: vert, fragmentShader: frag, uniforms, transparent: true }));
@@ -125,7 +127,7 @@ export async function initGlobe(canvas, { section, chips }) {
     vertexShader: vert, fragmentShader: haloFrag, uniforms, transparent: true,
     side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false,
   }));
-  halo.scale.setScalar(1.075);
+  halo.scale.setScalar(1.022);
   const spin = new THREE.Group();
   spin.add(planet);
   const earth = new THREE.Group();
@@ -158,13 +160,13 @@ export async function initGlobe(canvas, { section, chips }) {
   const frame = (dt, time) => {
     idle += reduced ? 0 : dt * 0.02;
     const sink = ease(THREE.MathUtils.clamp((S.q - 0.42) / 0.5, 0, 1));
-    const big = portrait() ? 1.25 : 1.65;
-    earth.scale.setScalar(big * (1 - 0.18 * sink));
-    earth.position.y = (portrait() ? -2.3 : -2.05) - sink * 1.1;
+    const big = portrait() ? 1.3 : 2.15;
+    earth.scale.setScalar(big * (1 - 0.22 * sink));
+    earth.position.y = (portrait() ? -2.35 : -2.55) - sink * 1.3;
     earth.rotation.x = 0.28;
     spin.rotation.y = faceKL - 0.35 + idle;
     uniforms.uTime.value = time;
-    uniforms.uOpacity.value = 1 - ease(THREE.MathUtils.clamp((sink - 0.55) / 0.45, 0, 1));
+    uniforms.uOpacity.value = 1 - ease(THREE.MathUtils.clamp((sink - 0.6) / 0.4, 0, 1));
     renderer.render(scene, camera);
   };
   runWhileVisible(canvas, frame);
