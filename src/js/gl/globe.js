@@ -1,7 +1,7 @@
 // Globe: NASA Blue Marble by day, Black Marble city lights by night, drifting cloud cover, a
-// specular glint on open water and a thin limb glow. The planet rises from the bottom of a pinned
-// section, turns until Kuala Lumpur faces the reader, and settles to a smaller sphere as the copy
-// hands over.
+// specular glint on open water and a thin limb glow. The planet sits as a night-side horizon at
+// the foot of a short pinned stage while the copy scrolls past it, then sinks away and fades so
+// the member card can rise edge-on out of the dark into the next section.
 import * as THREE from 'three';
 import { gsap, ScrollTrigger, reduced } from '../motion.js';
 import { makeRenderer, fit, runWhileVisible } from './stage.js';
@@ -96,7 +96,7 @@ function latLonToLocal(lat, lon) {
   return new THREE.Vector3(-Math.cos(phi) * Math.sin(theta), Math.cos(theta), Math.sin(phi) * Math.sin(theta));
 }
 
-export async function initGlobe(canvas, { pin, section, chips, copyA, copyB }) {
+export async function initGlobe(canvas, { section, chips }) {
   const renderer = makeRenderer(canvas, { alpha: true, maxDpr: 1.5 });
   renderer.toneMapping = THREE.NoToneMapping;
   const scene = new THREE.Scene();
@@ -112,7 +112,8 @@ export async function initGlobe(canvas, { pin, section, chips, copyA, copyB }) {
   }, undefined, () => res(null)));
   const [day, night, data] = await Promise.all([load('/globe/day.webp', true), load('/globe/night.webp', true), load('/globe/data.webp', false)]);
 
-  const sun = new THREE.Vector3(-0.9, 0.55, 0.55).normalize();
+  // sun behind and above: the face toward us is night (city lights), dawn rims the top edge
+  const sun = new THREE.Vector3(0.1, 0.38, -0.92).normalize();
   const uniforms = {
     uDay: { value: day }, uNight: { value: night }, uData: { value: data },
     uSun: { value: sun }, uTime: { value: 0 }, uOpacity: { value: 1 },
@@ -136,59 +137,35 @@ export async function initGlobe(canvas, { pin, section, chips, copyA, copyB }) {
   const kl = latLonToLocal(KL.lat, KL.lon);
   const faceKL = Math.atan2(-kl.x, kl.z);
 
-  // Scroll: rises from the bottom, turns, settles; copy A leaves, copy B arrives.
-  const S = { p: 0 };
-  const big = () => (camera.aspect < 0.9 ? 1.25 : 1.65);
-  const small = () => (camera.aspect < 0.9 ? 0.62 : 0.58);
+  // Scroll: q runs across the pinned stretch only. The entry is the stage scrolling in, which
+  // lifts the horizon from below; the copy is outside the stage and scrolls past at page speed.
+  const S = { q: 0 };
+  const portrait = () => camera.aspect < 0.9;
   if (!reduced) {
-    const tl = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 1 } });
-    tl.to(S, { p: 1, ease: 'none', duration: 1 }, 0);
-    tl.to(copyA, { yPercent: -30, opacity: 0, ease: 'power2.in', duration: 0.2 }, 0.14);
-    tl.to(chips.children, { opacity: 0, y: -16, ease: 'none', duration: 0.12, stagger: { amount: 0.12, from: 'random' } }, 0.24);
-    if (copyB) tl.fromTo(copyB, { opacity: 0, y: 40 }, { opacity: 1, y: 0, ease: 'power3.out', duration: 0.2 }, 0.62);
-    // chips drift in as the section is entered
+    const tl = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 0.8 } });
+    tl.to(S, { q: 1, ease: 'none', duration: 1 }, 0);
+    tl.to(chips.children, { opacity: 0, y: -14, ease: 'none', duration: 0.3, stagger: { amount: 0.2, from: 'random' } }, 0.42);
     gsap.from(chips.children, { opacity: 0, scale: 0.85, duration: 1, ease: 'power3.out', stagger: { amount: 0.5, from: 'random' },
-      scrollTrigger: { trigger: section, start: 'top 60%', once: true } });
-  } else {
-    S.p = 1;
+      scrollTrigger: { trigger: section, start: 'top 55%', once: true } });
   }
 
   const layout = () => fit(renderer, camera, canvas);
   layout();
   addEventListener('resize', layout);
 
-  const v = new THREE.Vector3();
-  const nrm = new THREE.Vector3();
-  const toCam = new THREE.Vector3();
   let idle = 0;
-  const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const ease = (x) => x * x * (3 - 2 * x);
   const frame = (dt, time) => {
-    idle += reduced ? 0 : dt * 0.05;
-    const p = S.p;
-    const k = ease(THREE.MathUtils.clamp((p - 0.12) / 0.63, 0, 1));
-    // position and scale: a rising horizon → a settled sphere
-    const s = THREE.MathUtils.lerp(big(), small(), k);
-    earth.scale.setScalar(s);
-    earth.position.y = THREE.MathUtils.lerp(camera.aspect < 0.9 ? -2.3 : -2.05, camera.aspect < 0.9 ? 0.5 : -0.12, k);
-    earth.rotation.x = THREE.MathUtils.lerp(0.28, 0.06, k);
-    spin.rotation.y = faceKL - (1 - k) * 2.4 + idle * (1 - k);
+    idle += reduced ? 0 : dt * 0.02;
+    const sink = ease(THREE.MathUtils.clamp((S.q - 0.42) / 0.5, 0, 1));
+    const big = portrait() ? 1.25 : 1.65;
+    earth.scale.setScalar(big * (1 - 0.18 * sink));
+    earth.position.y = (portrait() ? -2.3 : -2.05) - sink * 1.1;
+    earth.rotation.x = 0.28;
+    spin.rotation.y = faceKL - 0.35 + idle;
     uniforms.uTime.value = time;
-    uniforms.uOpacity.value = 1 - Math.max(0, (p - 0.92) / 0.08) * 0.6;
+    uniforms.uOpacity.value = 1 - ease(THREE.MathUtils.clamp((sink - 0.55) / 0.45, 0, 1));
     renderer.render(scene, camera);
-
-    // project the KL pin; hide it when it turns to the far side
-    if (pin) {
-      v.copy(kl).multiplyScalar(1.005);
-      planet.localToWorld(v);
-      nrm.copy(kl).applyQuaternion(planet.getWorldQuaternion(new THREE.Quaternion()));
-      toCam.copy(camera.position).sub(v).normalize();
-      const facing = nrm.dot(toCam);
-      const sp = v.clone().project(camera);
-      const x = (sp.x * 0.5 + 0.5) * canvas.clientWidth;
-      const y = (-sp.y * 0.5 + 0.5) * canvas.clientHeight;
-      pin.style.transform = `translate3d(${x - 5}px, ${y - 5}px, 0)`;
-      pin.style.opacity = String(THREE.MathUtils.clamp((facing - 0.15) * 4, 0, 1) * THREE.MathUtils.clamp((k - 0.5) * 4, 0, 1));
-    }
   };
   runWhileVisible(canvas, frame);
   frame(0, 0);

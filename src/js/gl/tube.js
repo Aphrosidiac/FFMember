@@ -94,14 +94,16 @@ export async function initTube(canvas, { section, copy }) {
   key.position.set(-3, 4, 5);
   scene.add(key);
 
-  const S = { p: 0, cardY: -3, cardTurn: -Math.PI * 2.5 };
+  // The card starts edge-on at the centre, so it reads as a thin line rising out of the dark while
+  // the stage scrolls in behind the sinking globe, then turns to face the reader.
+  const S = { p: 0, cardY: -0.3, cardTurn: -Math.PI * 2.5 };
   if (!reduced) {
     const tl = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom bottom', scrub: 1 } });
     tl.to(S, { p: 1, ease: 'none', duration: 1 }, 0)
       .to(fade, { value: 1, duration: 0.14, ease: 'none' }, 0.02)
-      .to(S, { cardY: 0.25, duration: 0.42, ease: 'power3.out' }, 0.18)
-      .to(S, { cardTurn: 0, duration: 0.72, ease: 'power1.inOut' }, 0.2)
-      .fromTo(copy, { opacity: 0, y: 50, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.16, ease: 'power2.out' }, 0.5);
+      .to(S, { cardY: 0.25, duration: 0.16, ease: 'power2.out' }, 0)
+      .to(S, { cardTurn: 0, duration: 0.6, ease: 'power1.inOut' }, 0.12)
+      .fromTo(copy, { opacity: 0, y: 50, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.14, ease: 'power2.out' }, 0.44);
   } else {
     Object.assign(S, { p: 0.6, cardY: 0.25, cardTurn: 0 });
   }

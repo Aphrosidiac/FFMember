@@ -123,7 +123,7 @@
 
 .globe {
   position: relative;
-  height: 270svh;
+  height: 190svh;
   background: var(--ink);
 }
 .globe__stage {
@@ -139,12 +139,14 @@
   height: 100%;
 }
 .globe__head {
+  /* outside the sticky stage: the copy scrolls through at page speed while the planet holds */
   position: absolute;
   inset: 0 0 auto;
+  z-index: 1;
   display: grid;
   justify-items: center;
   gap: 2.4rem;
-  padding-top: clamp(11rem, 14vh, 15rem);
+  padding-top: 18svh;
   text-align: center;
 }
 .globe__head .h1 {
@@ -152,42 +154,6 @@
 }
 .globe__head .lead {
   max-width: 46ch;
-}
-.globe__pin {
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: var(--t-small);
-  line-height: 1.2;
-  pointer-events: none;
-  opacity: 0;
-}
-.globe__pin i {
-  position: relative;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background: var(--lime);
-  flex: none;
-}
-.globe__pin i::after {
-  content: '';
-  position: absolute;
-  inset: -0.6rem;
-  border-radius: 50%;
-  border: 1px solid var(--lime);
-  animation: pulse 2.4s var(--ease-out) infinite;
-}
-.globe__pin em {
-  font-style: normal;
-  color: var(--muted);
-}
-@keyframes pulse {
-  from { transform: scale(0.4); opacity: 1; }
-  to { transform: scale(2.2); opacity: 0; }
 }
 .globe__toasts {
   position: absolute;
@@ -233,7 +199,7 @@
 }
 @media (max-width: 860px) {
   .globe {
-    height: 300svh;
+    height: 200svh;
   }
   .globe__toasts {
     left: var(--gutter);
@@ -257,8 +223,11 @@
 /* ---------- 03 tube ---------- */
 
 .tube {
+  /* slides up over the globe's last stretch: the planet sinks while the card rises out of it */
   position: relative;
-  height: 400svh;
+  z-index: 2;
+  margin-top: -50svh;
+  height: 320svh;
   background: var(--ink);
 }
 .tube__stage {
@@ -313,7 +282,7 @@
 }
 @media (max-width: 860px) {
   .tube {
-    height: 320svh;
+    height: 280svh;
   }
 }
 
