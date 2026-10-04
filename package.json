@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --port 3180 --strictPort",
     "build": "vite build",
-    "preview": "vite preview --port 3181 --strictPort"
+    "preview": "vite preview --port 3181 --strictPort",
+    "deploy": "./scripts/deploy.sh",
+    "deploy:preview": "FF_BRANCH=preview ./scripts/deploy.sh"
   },
   "dependencies": {
     "gsap": "3.15",

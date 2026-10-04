@@ -210,3 +210,34 @@ pill button a better hover, and fix the membership dialog.
 
 `tools/check.mjs` 159/159. Checked at 1440×900 and 390×844 (`tools/ui_shots.mjs`,
 `tools/modal_shot.mjs`, `tools/btn_frames.mjs`).
+
+## 2026-10-04 — hero headline, card edge aliasing
+
+- Headline is now "Built by us. / Looked after by us." with no eyebrow (also on the card's back).
+- **Jagged card outline** (Fakhrul, same issue as the TBP latte bottle). The rim is a 0.006-unit
+  bevel, one or two pixels wide on screen, drawn with the extrusion's flat facets in near-mirror
+  chrome. Neighbouring facets took turns reflecting a softbox strip and the black room, so the
+  outline's last pixel carried a shading spike that antialiasing can't smooth: dashes along the top,
+  a hard dark line down the side. Fix: rim normals computed from the rounded box's own shape (smooth,
+  tilting into the caps across the bevel), and a satin rim (roughness 0.34, no clearcoat).
+  `tools/card_edges.mjs` renders the outline at 2x, three pointer positions, blown up 3x
+  nearest-neighbour: now a continuous thin rim with no dashes or stair-steps.
+
+## 2026-10-04 — the card, redesigned
+
+Fakhrul: "plain white text with white card". The face was brushed mirror metal, so under the hero's
+softboxes it became one light-grey sheet with white paint on it. Contrast now comes from finish:
+- **Body:** bead-blasted black (dielectric, roughness 0.58, specular 0.3 so its sheen stays low).
+- **//FF:** large, raised and polished (metal, roughness 0.2); it flashes as the card turns.
+- **Chip:** champagne satin, slightly raised. **Type:** MEMBER, FF DEV STUDIO, KUALA LUMPUR
+  laser-etched in grey, flush. Faint machined arcs from the lower-right corner, in finish only.
+- **Rim:** satin gunmetal. The back matches (small raised mark, etched lines).
+- **Emboss without aliasing.** A bump map drew a dotted line along the slashes' diagonal bevels
+  (screen-space slope flicker), and a stroke-stacked bevel terraced. Now each raised shape is filled
+  once, the fill is blurred, `2·blur − fill` (smoothstepped) gives a smooth chamfer, and a normal
+  map is baked from it on the CPU. `tools/card_edges.mjs` still shows a clean rim.
+- **Baked, not painted at runtime.** The first build painted the faces and baked the normal maps in
+  the visitor's browser; the blur and normal passes blocked the main thread long enough that the
+  checker's hero-drawn and price-tween checks failed. `tools/bake_card.mjs` now runs
+  `paintCardFaces()` in a browser and saves six maps to `public/card/` (185 kB); the site only
+  loads them. Re-run it after changing the card design.

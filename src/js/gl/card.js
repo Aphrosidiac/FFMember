@@ -1,5 +1,5 @@
 // The FF member card: a rounded, bevelled metal card built from a Shape, with its two faces painted
-// on canvases. It is a membership mark — no network logos, no card numbers — and its back says so.
+// on canvases (colour, finish and height maps). It is a membership mark — no network logos, no card numbers — and its back says so.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
@@ -8,14 +8,7 @@ export const CARD_W = 2.6;
 export const CARD_H = (CARD_W * 53.98) / 85.6;
 const CORNER = (CARD_W * 3.18) / 85.6;
 const DEPTH = 0.024;
-
-const loadImage = (src) =>
-  new Promise((res, rej) => {
-    const img = new Image();
-    img.onload = () => res(img);
-    img.onerror = rej;
-    img.src = src;
-  });
+const BEVEL = 0.006;
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -25,25 +18,6 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.arcTo(x, y + h, x, y, r);
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
-}
-
-// Brushed-metal ground: a cool vertical gradient with horizontal streaks of seeded noise.
-function brushed(ctx, w, h, base, seed = 7) {
-  const g = ctx.createLinearGradient(0, 0, w, h);
-  g.addColorStop(0, base[0]);
-  g.addColorStop(0.55, base[1]);
-  g.addColorStop(1, base[2]);
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, w, h);
-  let s = seed;
-  const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
-  ctx.globalAlpha = 0.05;
-  for (let i = 0; i < 900; i++) {
-    const y = rnd() * h;
-    ctx.fillStyle = rnd() > 0.5 ? '#ffffff' : '#000000';
-    ctx.fillRect(0, y, w, rnd() * 1.6 + 0.4);
-  }
-  ctx.globalAlpha = 1;
 }
 
 function chip(ctx, x, y, w, h) {
@@ -70,97 +44,198 @@ function chip(ctx, x, y, w, h) {
   ctx.stroke();
 }
 
-async function paintFaces() {
+// The FF mark as paths (from brand/ff-mark-white.svg, 194 × 72), so it can be drawn into the colour,
+// finish and height maps identically.
+const MARK = ['M0 72 16 0h14L14 72Z', 'M24 72 40 0h14L38 72Z', 'M72 0h54v15H88v13h32v14H88v30H72Z', 'M140 0h54v15h-38v13h32v14h-32v30h-16Z'];
+function markPath(x, y, w) {
+  const s = w / 194;
+  const path = new Path2D();
+  const m = new DOMMatrix().translateSelf(x, y).scaleSelf(s, s);
+  for (const d of MARK) path.addPath(new Path2D(d), m);
+  return path;
+}
+
+// Raised shapes are filled once into the height canvas at their top level; heightToNormal turns each
+// edge into a smooth chamfer.
+function emboss(c, path, top = 255) {
+  c.fillStyle = `rgb(${top},${top},${top})`;
+  c.fill(path);
+}
+
+// Height → tangent-space normal map, once, on the CPU. A bump map takes its slope from screen-space
+// derivatives, which flicker pixel to pixel along a diagonal edge (the slashes) and draw a dotted line
+// — the same last-pixel shading spike antialiasing can't fix. Smoothing the height first and baking
+// real normals keeps the bevel's shading stable at every size (mipmaps average it properly).
+function heightToNormal(src, strength) {
+  const W = src.width;
+  const H = src.height;
+  const px = src.getContext('2d').getImageData(0, 0, W, H).data;
+  let h = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) h[i] = px[i * 4] / 255;
+  const blur = (a, r) => { // separable box blur, run twice (≈ gaussian)
+    const t = new Float32Array(W * H);
+    for (let y = 0; y < H; y++) {
+      let acc = 0;
+      for (let x = -r; x <= r; x++) acc += a[y * W + Math.min(Math.max(x, 0), W - 1)];
+      for (let x = 0; x < W; x++) {
+        t[y * W + x] = acc / (2 * r + 1);
+        acc += a[y * W + Math.min(x + r + 1, W - 1)] - a[y * W + Math.max(x - r, 0)];
+      }
+    }
+    const o = new Float32Array(W * H);
+    for (let x = 0; x < W; x++) {
+      let acc = 0;
+      for (let y = -r; y <= r; y++) acc += t[Math.min(Math.max(y, 0), H - 1) * W + x];
+      for (let y = 0; y < H; y++) {
+        o[y * W + x] = acc / (2 * r + 1);
+        acc += t[Math.min(y + r + 1, H - 1) * W + x] - t[Math.max(y - r, 0) * W + x];
+      }
+    }
+    return o;
+  };
+  // chamfer: blur the filled shapes, then keep 2·blur − fill inside each shape. Deep inside the two
+  // agree (full height); at the edge the blur is half the fill (zero). Smoothstep rounds the shoulder.
+  const b = blur(blur(blur(h, 3), 3), 3);
+  for (let i = 0; i < W * H; i++) {
+    const top = h[i];
+    if (top <= 0) { h[i] = 0; continue; }
+    const t = Math.min(Math.max((2 * b[i] - top) / top, 0), 1);
+    h[i] = top * t * t * (3 - 2 * t);
+  }
+  const [out, oc] = canvas(W, H);
+  const img = oc.createImageData(W, H);
+  const d = img.data;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      const dx = (h[y * W + Math.min(x + 1, W - 1)] - h[y * W + Math.max(x - 1, 0)]) * 0.5;
+      const dy = (h[Math.min(y + 1, H - 1) * W + x] - h[Math.max(y - 1, 0) * W + x]) * 0.5;
+      // canvas rows run down, texture v runs up (flipY), so the row slope enters with its sign kept
+      let nx = -dx * strength;
+      let ny = dy * strength;
+      const l = Math.hypot(nx, ny, 1);
+      d[i * 4] = ((nx / l) * 0.5 + 0.5) * 255;
+      d[i * 4 + 1] = ((ny / l) * 0.5 + 0.5) * 255;
+      d[i * 4 + 2] = ((1 / l) * 0.5 + 0.5) * 255;
+      d[i * 4 + 3] = 255;
+    }
+  }
+  oc.putImageData(img, 0, 0);
+  return out;
+}
+
+// Finish map channels as three reads them: green = roughness, blue = metalness.
+const finish = (rough, metal) => `rgb(0,${Math.round(rough * 255)},${Math.round(metal * 255)})`;
+
+const BODY = { color: '#0b0b0a', rough: 0.58, metal: 0 };        // bead-blasted black
+const POLISH = { color: '#dedbd3', rough: 0.2, metal: 1 };         // polished, raised
+const ETCH = { color: '#6d6b65', rough: 0.78, metal: 0 };          // laser-etched, flush
+
+function canvas(W, H) {
+  const cv = document.createElement('canvas');
+  cv.width = W;
+  cv.height = H;
+  return [cv, cv.getContext('2d')];
+}
+
+// Paints both faces onto canvases. Run by tools/bake_card.mjs, which saves them to public/card/;
+// the site loads those files, so none of this (and none of the normal baking) runs for visitors.
+export async function paintCardFaces() {
   const W = 2048;
   const H = Math.round((W * 53.98) / 85.6);
-  const mark = await loadImage('/brand/ff-mark-white.svg');
   await document.fonts.load('500 64px "Instrument Sans"').catch(() => {});
+  const label = (c, text, x, y, size, track, align = 'left') => {
+    c.font = `500 ${size}px "Instrument Sans"`;
+    c.letterSpacing = `${track}px`;
+    c.textAlign = align;
+    c.fillText(text, x, y);
+  };
 
-  // colour — front
-  const front = document.createElement('canvas');
-  front.width = W;
-  front.height = H;
-  let c = front.getContext('2d');
-  brushed(c, W, H, ['#2c2c29', '#1b1b19', '#0f0f0e']);
-  // a soft engraved field behind the mark
-  const halo = c.createRadialGradient(W * 0.5, H * 0.48, 10, W * 0.5, H * 0.48, W * 0.42);
-  halo.addColorStop(0, 'rgba(243,239,228,0.07)');
-  halo.addColorStop(1, 'rgba(243,239,228,0)');
-  c.fillStyle = halo;
-  c.fillRect(0, 0, W, H);
-  // mark, centred, etched (lighter)
-  const mw = W * 0.34;
-  const mh = (mw * 72) / 194;
-  c.globalAlpha = 0.9;
-  c.drawImage(mark, (W - mw) / 2, H * 0.48 - mh / 2, mw, mh);
-  c.globalAlpha = 1;
-  c.fillStyle = 'rgba(243,239,228,0.86)';
-  c.font = '500 58px "Instrument Sans"';
-  c.letterSpacing = '14px';
-  c.fillText('MEMBER', 110, 160);
-  c.fillStyle = 'rgba(243,239,228,0.55)';
-  c.beginPath();
-  c.arc(W - 128, 140, 12, 0, Math.PI * 2);
-  c.fill();
-  chip(c, 110, H * 0.62, 230, 176);
-  c.letterSpacing = '6px';
-  c.fillStyle = 'rgba(243,239,228,0.8)';
-  c.font = '500 50px "Instrument Sans"';
-  c.fillText('FF DEV STUDIO', 110, H - 120);
-  c.fillStyle = 'rgba(243,239,228,0.5)';
-  c.font = '500 50px "Instrument Sans"';
-  c.letterSpacing = '6px';
-  c.textAlign = 'right';
-  c.fillText('KUALA LUMPUR', W - 110, H - 120);
+  // ---------- front ----------
+  const [colour, cc] = canvas(W, H);
+  const [orm, oc] = canvas(W, H);
+  const [height, hc] = canvas(W, H);
+  cc.fillStyle = BODY.color;
+  cc.fillRect(0, 0, W, H);
+  oc.fillStyle = finish(BODY.rough, BODY.metal);
+  oc.fillRect(0, 0, W, H);
+  hc.fillStyle = '#000';
+  hc.fillRect(0, 0, W, H);
 
-  // colour — back
-  const back = document.createElement('canvas');
-  back.width = W;
-  back.height = H;
-  c = back.getContext('2d');
-  brushed(c, W, H, ['#121211', '#1d1d1b', '#2a2a27'], 11);
-  c.strokeStyle = 'rgba(243,239,228,0.07)';
-  c.lineWidth = 2;
-  for (let x = 0; x <= W; x += 128) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); }
-  for (let y = 0; y <= H; y += 128) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
-  c.globalAlpha = 0.85;
-  const bw = W * 0.14;
-  c.drawImage(mark, 110, 110, bw, (bw * 72) / 194);
-  c.globalAlpha = 1;
-  c.fillStyle = 'rgba(243,239,228,0.9)';
-  c.font = '500 104px "Instrument Sans"';
-  c.letterSpacing = '-3px';
-  c.fillText('Kept in care,', 110, H * 0.56);
-  c.fillText('every month.', 110, H * 0.56 + 116);
-  c.fillStyle = 'rgba(243,239,228,0.55)';
-  c.font = '500 40px "Instrument Sans"';
-  c.letterSpacing = '3px';
-  c.fillText('A MEMBERSHIP CARD, NOT A PAYMENT CARD', 110, H - 170);
-  c.fillText('HELLO@FFDEV.STUDIO', 110, H - 110);
+  // machined arcs from the lower right corner: a little glossier than the body, so they only show
+  // when light rakes across the card
+  oc.strokeStyle = finish(0.5, 0.22);
+  oc.lineWidth = 2;
+  for (let r = 160; r < W * 0.62; r += 24) {
+    oc.beginPath();
+    oc.arc(W * 1.02, H * 1.08, r, Math.PI, Math.PI * 1.5);
+    oc.stroke();
+  }
 
-  // roughness — front: the mark and chip polish brighter than the brushed ground
-  const rough = document.createElement('canvas');
-  rough.width = W;
-  rough.height = H;
-  c = rough.getContext('2d');
-  c.fillStyle = '#8a8a8a';
-  c.fillRect(0, 0, W, H);
-  c.filter = 'brightness(0)';
-  c.globalAlpha = 0.75;
-  c.drawImage(mark, (W - mw) / 2, H * 0.48 - mh / 2, mw, mh);
-  c.filter = 'none';
-  c.globalAlpha = 1;
-  c.fillStyle = '#b4b4b4';
-  roundRect(c, 110, H * 0.62, 230, 176, 28);
-  c.fill();
+  // the mark: large, raised and polished
+  const mw = W * 0.4;
+  const mark = markPath((W - mw) / 2, H * 0.45 - (mw * 72) / 194 / 2, mw);
+  cc.fillStyle = POLISH.color;
+  cc.fill(mark);
+  oc.fillStyle = finish(POLISH.rough, POLISH.metal);
+  oc.fill(mark);
+  emboss(hc, mark);
 
-  const tex = (cv, srgb) => {
-    const t = new THREE.CanvasTexture(cv);
-    t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+  // chip: champagne satin, slightly raised
+  const chipPath = new Path2D();
+  const cx = 150, cy = H * 0.58, cw = 220, ch = 168;
+  chipPath.roundRect(cx, cy, cw, ch, 26);
+  chip(cc, cx, cy, cw, ch);
+  oc.fillStyle = finish(0.32, 1);
+  oc.fill(chipPath);
+  emboss(hc, chipPath, 150);
+
+  // etched words
+  for (const [c, fill] of [[cc, ETCH.color], [oc, finish(ETCH.rough, ETCH.metal)]]) {
+    c.fillStyle = fill;
+    label(c, 'MEMBER', 150, 190, 52, 16);
+    label(c, 'FF DEV STUDIO', 150, H - 130, 44, 8);
+    label(c, 'KUALA LUMPUR', W - 150, H - 130, 44, 8, 'right');
+  }
+
+  // ---------- back ----------
+  const [bColour, bc] = canvas(W, H);
+  const [bOrm, bo] = canvas(W, H);
+  const [bHeight, bh] = canvas(W, H);
+  bc.fillStyle = BODY.color;
+  bc.fillRect(0, 0, W, H);
+  bo.fillStyle = finish(BODY.rough, BODY.metal);
+  bo.fillRect(0, 0, W, H);
+  bh.fillStyle = '#000';
+  bh.fillRect(0, 0, W, H);
+  const small = markPath(150, 130, W * 0.13);
+  bc.fillStyle = POLISH.color;
+  bc.fill(small);
+  bo.fillStyle = finish(POLISH.rough, POLISH.metal);
+  bo.fill(small);
+  emboss(bh, small);
+  for (const [c, fill] of [[bc, ETCH.color], [bo, finish(ETCH.rough, ETCH.metal)]]) {
+    c.fillStyle = fill;
+    label(c, 'Built by us.', 150, H * 0.56, 104, -3);
+    label(c, 'Looked after by us.', 150, H * 0.56 + 116, 104, -3);
+    label(c, 'A MEMBERSHIP CARD, NOT A PAYMENT CARD', 150, H - 170, 38, 3);
+    label(c, 'HELLO@FFDEV.STUDIO', 150, H - 110, 38, 3);
+  }
+
+  return {
+    front: { colour, orm, normal: heightToNormal(height, 6) },
+    back: { colour: bColour, orm: bOrm, normal: heightToNormal(bHeight, 6) },
+  };
+}
+
+const MAPS = ['front-colour', 'front-orm', 'front-normal', 'back-colour', 'back-orm', 'back-normal'];
+function loadFaces() {
+  const loader = new THREE.TextureLoader();
+  return Promise.all(MAPS.map((name) => loader.loadAsync(`/card/${name}.webp`).then((t) => {
+    t.colorSpace = name.endsWith('colour') ? THREE.SRGBColorSpace : THREE.NoColorSpace;
     t.anisotropy = 8;
     return t;
-  };
-  return { front: tex(front, true), back: tex(back, true), rough: tex(rough, false) };
+  }))).then(([fc, fo, fn, bc, bo, bn]) => ({ front: { map: fc, orm: fo, normal: fn }, back: { map: bc, orm: bo, normal: bn } }));
 }
 
 // Split an extruded, non-indexed geometry into three draw groups by face normal: front cap,
@@ -188,6 +263,28 @@ function groupByFacing(geo) {
   out.setAttribute('uv', take(uv));
   let start = 0;
   buckets.forEach((b, k) => { out.addGroup(start, b.length, k); start += b.length; });
+  // Rim normals from the rounded box's own shape, not the extrusion's flat facets. Flat facets on a
+  // rim one or two pixels wide take turns reflecting a bright strip and the black room, and that
+  // reads as dashes and stair-steps along the outline — a shading spike that antialiasing can't
+  // smooth, because it sits in the outline's last pixel.
+  const nr = out.attributes.normal;
+  const core = { x: CARD_W / 2 - CORNER, y: CARD_H / 2 - CORNER, z: DEPTH / 2 };
+  for (let i = buckets[0].length + buckets[1].length; i < nr.count; i++) {
+    const x = out.attributes.position.getX(i);
+    const y = out.attributes.position.getY(i);
+    const z = out.attributes.position.getZ(i);
+    const qx = Math.abs(x) - core.x;
+    const qy = Math.abs(y) - core.y;
+    let dx = 0;
+    let dy = 0;
+    if (qx > 0 && qy > 0) { const l = Math.hypot(qx, qy); dx = qx / l; dy = qy / l; }
+    else if (qx > qy) dx = 1;
+    else dy = 1;
+    const tilt = Math.sign(z) * Math.min(Math.max((Math.abs(z) - core.z) / BEVEL, 0), 1); // 0 on the side wall, ±1 at the cap
+    const side = Math.sqrt(1 - tilt * tilt);
+    n.set(Math.sign(x) * dx * side, Math.sign(y) * dy * side, tilt).normalize();
+    nr.setXYZ(i, n.x, n.y, n.z);
+  }
   // Cap UVs: 0…1 across the card, back face mirrored so its texture reads the right way round.
   const p = out.attributes.position;
   const u = out.attributes.uv;
@@ -217,27 +314,30 @@ export function cardGeometry() {
   const geo = new THREE.ExtrudeGeometry(s, {
     depth: DEPTH,
     bevelEnabled: true,
-    bevelThickness: 0.006,
-    bevelSize: 0.006,
+    bevelThickness: BEVEL,
+    bevelSize: BEVEL,
     bevelSegments: 4,
-    curveSegments: 18,
+    curveSegments: 24,
   });
   geo.translate(0, 0, -DEPTH / 2);
   return groupByFacing(geo);
 }
 
-// finish: 'brushed' (default, for dim scenes) or 'polished' (full metal, stronger clearcoat and
-// reflections — for the lit hero stage).
-export async function makeCard({ finish = 'brushed' } = {}) {
-  const faces = await paintFaces();
-  const polished = finish === 'polished';
-  const shared = polished
-    ? { metalness: 1, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.35, anisotropy: 0.8, anisotropyRotation: 0 }
-    : { metalness: 0.82, clearcoat: 0.7, clearcoatRoughness: 0.22, envMapIntensity: 1 };
+// One design for both scenes: a bead-blasted black body with a raised, mirror-polished mark and
+// etched type, on a gunmetal rim. `finish: 'polished'` lifts the reflections for the lit hero stage.
+export async function makeCard({ finish: look = 'brushed' } = {}) {
+  const faces = await loadFaces();
+  const env = look === 'polished' ? 1.25 : 1;
+  const face = (f) => new THREE.MeshPhysicalMaterial({
+    map: f.map, roughnessMap: f.orm, metalnessMap: f.orm, roughness: 1, metalness: 1,
+    normalMap: f.normal, envMapIntensity: env,
+    specularIntensity: 0.3, // the black body's sheen only; metal parts take their reflectance from colour
+  });
   const materials = [
-    new THREE.MeshPhysicalMaterial({ ...shared, map: faces.front, roughnessMap: faces.rough, roughness: polished ? 0.42 : 1 }),
-    new THREE.MeshPhysicalMaterial({ ...shared, map: faces.back, roughness: polished ? 0.3 : 0.5 }),
-    new THREE.MeshPhysicalMaterial({ ...shared, anisotropy: 0, color: polished ? '#d6d6d2' : '#5a5a55', roughness: polished ? 0.06 : 0.28 }),
+    face(faces.front),
+    face(faces.back),
+    // the rim is satin gunmetal, not mirror: a one-pixel band can't hold a crisp reflection without sparkling
+    new THREE.MeshPhysicalMaterial({ color: '#7d7c77', metalness: 1, roughness: 0.34, envMapIntensity: env }),
   ];
   const mesh = new THREE.Mesh(cardGeometry(), materials);
   mesh.name = 'ff-member-card';
