@@ -56,7 +56,7 @@
         <canvas class="hero__gl" data-hero-gl aria-hidden="true"></canvas>
         <div class="hero__shade" aria-hidden="true"></div>
         <div class="hero__head wrap">
-          <p class="eyebrow eyebrow--lime" data-hero-in>Managed care for FF-built websites</p>
+          <p class="eyebrow" data-hero-in>Managed care for FF-built websites</p>
           <h1 class="h-display hero__title" id="hero-title" data-hero-title>
             <span class="hero__line">Kept in care,</span>
             <span class="hero__line">every month.</span>
@@ -107,7 +107,7 @@
       </section>
 
       <!-- 04 · Numbers -->
-      <section class="figures" aria-labelledby="figures-title" data-figures>
+      <section class="figures" data-nav-theme="light" aria-labelledby="figures-title" data-figures>
         <div class="figures__arc figures__arc--left" aria-hidden="true" data-arc="left"></div>
         <div class="figures__arc figures__arc--right" aria-hidden="true" data-arc="right"></div>
         <div class="figures__sticky">
@@ -153,10 +153,10 @@
       </section>
 
       <!-- 07 · What members get -->
-      <section class="covers" aria-labelledby="covers-title">
+      <section class="covers" data-nav-theme="light" aria-labelledby="covers-title">
         <div class="covers__head wrap">
+          <p class="eyebrow">What membership covers</p>
           <h2 class="h1" id="covers-title">Made for the sites we already built.</h2>
-          <span class="small covers__count" data-covers-count>01 / 06</span>
         </div>
         <div class="covers__grid wrap">
           <div class="covers__media" data-process-media aria-hidden="true">
@@ -166,7 +166,10 @@
             <figure class="process__frame"><img src="/work/big-brain-furniture/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
             <figure class="process__frame"><img src="/work/lewix-ai/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
             <figure class="process__frame"><img src="/work/ascend-peptides/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
-            <figcaption class="process__caption small" data-process-caption>Hai Awan</figcaption>
+            <div class="process__foot small">
+              <span data-process-caption>Hai Awan</span>
+              <span class="process__count" data-covers-count>01 / 06</span>
+            </div>
           </div>
           <ol class="covers__list" data-process-steps>
             <li data-frame="0" data-name="Hai Awan"><span>01</span><h3>Hosting</h3><p>Managed hosting with SSL and a CDN, set up for the stack the site was built on.</p></li>
@@ -185,7 +188,7 @@
           <figure class="support__plate"><img src="/work/big-brain-furniture-alt/hero.webp" alt="" width="2880" height="1620" loading="lazy" /></figure>
         </div>
         <div class="banner__inner wrap">
-          <p class="eyebrow eyebrow--lime">Membership</p>
+          <p class="eyebrow">Membership</p>
           <h2 class="h1" id="banner-title">Three plans. One standard.</h2>
           <p class="lead">Start with Care and move up when the site needs more of our time. Pay yearly and two months are on us.</p>
           <a class="btn" href="#plans" data-scroll>See the plans</a>
@@ -193,7 +196,7 @@
       </section>
 
       <!-- 09 · Plans -->
-      <section class="plans" id="plans" aria-labelledby="plans-title">
+      <section class="plans" data-nav-theme="light" id="plans" aria-labelledby="plans-title">
         <div class="plans__head wrap">
           <div>
             <p class="eyebrow">Plans</p>
@@ -267,7 +270,7 @@
       </section>
 
       <!-- 10 · FAQ -->
-      <section class="faq" id="faq" aria-labelledby="faq-title">
+      <section class="faq" data-nav-theme="light" id="faq" aria-labelledby="faq-title">
         <div class="faq__top wrap">
           <h2 class="h1" id="faq-title">Before you sign up.</h2>
           <p class="lead">Anything not answered here: <a class="link" href="mailto:hello@ffdev.studio">hello@ffdev.studio</a></p>

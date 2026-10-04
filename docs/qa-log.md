@@ -167,3 +167,46 @@ rebuilt `src/js/gl/globe.js`:
 
 The globe chunk grows to 590 kB (168 kB gzip) because it brings in the node renderer; it is
 lazy-loaded with the section. `tools/check.mjs`: 159/159.
+
+## 2026-10-04 — hero backdrop: photoscanned rock instead of shader noise
+
+Fakhrul: the backdrop looked like a cheap low-poly render. Causes: the wall was fractal noise lit
+evenly (it read as gravel), the plinth's rect-area softboxes have no falloff so they flattened it
+mid-grey, and a fog band and a hard horizon line sat at the base.
+- **Wall.** Poly Haven rock_face_03 (CC0 scan) on a 320×150 displaced sheet: graphite albedo with AO
+  baked in, normal map, roughness, real displacement (0.9 units over an 8-unit tile).
+- **Light.** The wall renders in its own pass with only two lights: a high spot raking down the face
+  (shadow map rendered once, so the rock shadows itself) and a cove strip along the base. Then the
+  plinth and card scene draws on top, so its softboxes no longer touch the wall.
+- **Floor.** The fog band is gone; a soft additive spill fades from the foot of the wall.
+- `?hq` keeps full quality in headless captures (adaptive quality otherwise drops it).
+
+Checked at 1440×900, 1920×1080 and 390×844 (`tools/hero_shot.mjs`). `tools/check.mjs` 159/159.
+Textures add about 3 MB, loaded with the scene.
+
+## 2026-10-04 — nav, buttons, covers section, membership dialog, no lime
+
+Fakhrul asked to improve the "Made for the sites" section and the nav, drop Signal Lime, give every
+pill button a better hover, and fix the membership dialog.
+- **No lime.** Token removed. Focus rings are bone (ink on bone sections via `--focus`); the card's
+  dot, check marks, the plan badge, the savings figure and checkbox fill are bone.
+- **Nav.** No dark scrim smearing the bone sections: the mark, links and action are three glass
+  capsules. Over `[data-nav-theme="light"]` sections the bar flips to ink (mark, links, ink CTA).
+  One pill slides between links on hover and rests on the current section. **Bug fixed:** the
+  highlight only ever turned on, so "Work" stayed lit through every later section and after reload.
+  It is now recomputed on scroll from the section under the middle of the screen.
+- **Buttons** (`src/js/buttons.js`). The pill inverts: the opposite tone sweeps in from where the
+  pointer entered (and out the way it leaves) with a hairline ring, the label rolls up into a copy,
+  the arrow steps forward, press sinks it 3%. Ink buttons invert to bone. Hover only on hover-capable
+  pointers; no transitions under reduced motion. `setButtonText()` for labels set from script.
+- **Covers section.** The empty dark band under the screenshot is gone: the plate has even margins
+  and a footer row with the project name and the 01 / 06 counter. An eyebrow sits above the heading.
+  The active row's rule draws across in ink.
+- **Membership dialog. Bug fixed:** the "ready to send" step showed under the form before anything
+  was submitted (`.form__done { display: grid }` beat `[hidden]`; now `[hidden]` always wins). The
+  Billing fieldset lost its browser frame and its legend now reads as a label; the toggle is input
+  height and splits evenly. Empty error slots take no space, so the form fits a 900px screen. The
+  success heading no longer shows a focus ring.
+
+`tools/check.mjs` 159/159. Checked at 1440×900 and 390×844 (`tools/ui_shots.mjs`,
+`tools/modal_shot.mjs`, `tools/btn_frames.mjs`).

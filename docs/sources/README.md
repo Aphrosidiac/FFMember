@@ -8,3 +8,7 @@ Ungraded bases live in docs/sources/globe-base/.
 
 Work screenshots in public/work/ are FF Dev Studio's own projects, copied from PhantomClone/public/media.
 Fonts: Instrument Sans, SIL OFL (public/fonts). Marks: ffdevstudio/brand-system.
+
+Hero rock wall in public/hero/ is packed by tools/pack_rock.py from Poly Haven "Rock Face 03"
+(https://polyhaven.com/a/rock_face_03, CC0; photography Dario Barresi, processing Rico Cilliers):
+4k diffuse, OpenGL normal, roughness, displacement and AO in docs/sources/polyhaven/ (git-ignored).

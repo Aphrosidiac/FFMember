@@ -198,7 +198,7 @@
   top: 0.6rem;
   width: 0.8rem;
   height: 0.45rem;
-  border: solid var(--lime);
+  border: solid var(--bone);
   border-width: 0 0 1.5px 1.5px;
   transform: rotate(-45deg);
 }
@@ -292,6 +292,7 @@
   color: var(--ink);
   --muted: rgba(11, 11, 10, 0.62);
   overflow: clip;
+  --focus: var(--ink);
 }
 .figures__sticky {
   position: sticky;
@@ -492,20 +493,15 @@
   color: var(--ink);
   --muted: rgba(11, 11, 10, 0.62);
   --line: rgba(11, 11, 10, 0.14);
+  --focus: var(--ink);
 }
 .covers__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 3rem;
+  display: grid;
+  gap: 2.4rem;
   margin-bottom: clamp(4rem, 6vw, 8rem);
 }
 .covers__head .h1 {
   max-width: 14ch;
-}
-.covers__count {
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
 }
 .covers__grid {
   display: grid;
@@ -514,14 +510,16 @@
   align-items: start;
 }
 .covers__media {
+  --plate: clamp(1.6rem, 2.2vw, 2.8rem);
+  --foot: 5.6rem;
   position: sticky;
-  top: 10rem;
-  aspect-ratio: 16 / 11.4;
+  top: 11rem;
   border-radius: var(--radius-lg);
   overflow: clip;
   background: var(--graphite);
 }
 .covers__list li {
+  position: relative;
   display: grid;
   grid-template-columns: 5rem minmax(0, 1fr) minmax(0, 1.3fr);
   gap: 2rem;
@@ -536,6 +534,22 @@
 }
 .covers__list li.is-active {
   color: var(--ink);
+}
+/* the active row's rule draws across in ink */
+.covers__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.9s var(--ease-out);
+}
+.covers__list li.is-active::before {
+  transform: scaleX(1);
 }
 .covers__list span {
   font-size: var(--t-small);
@@ -570,20 +584,21 @@
 .process__frame {
   position: absolute;
   inset: 0;
-  padding: clamp(1.6rem, 2.4vw, 3.2rem) clamp(1.6rem, 2.4vw, 3.2rem) clamp(5.6rem, 6vw, 7.2rem);
+  padding: var(--plate) var(--plate) var(--foot);
   background: var(--graphite);
   clip-path: inset(100% 0 0 0);
   transition: clip-path 1s var(--ease-in-out);
 }
-.process__frame.is-active {
-  clip-path: inset(0);
+.process__frame:first-child {
+  position: relative;
 }
+.process__frame.is-active,
 .process__frame.is-past {
   clip-path: inset(0);
 }
 .process__frame img {
+  display: block;
   width: 100%;
-  height: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
   object-fit: cover;
@@ -596,27 +611,21 @@
 .process__frame.is-active img {
   transform: scale(1);
 }
-.process__caption {
+.process__foot {
   position: absolute;
-  left: 1.6rem;
-  bottom: 1.6rem;
-  padding: 0.7rem 1.4rem;
-  border-radius: var(--pill);
-  background: rgba(11, 11, 10, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.process__caption {
-  position: absolute;
-  left: 1.6rem;
-  bottom: 1.6rem;
-  padding: 0.7rem 1.4rem;
-  border-radius: var(--pill);
-  background: rgba(11, 11, 10, 0.65);
+  left: var(--plate);
+  right: var(--plate);
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: var(--foot);
   color: var(--bone);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+}
+.process__count {
+  color: rgba(243, 239, 228, 0.55);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- 08 banner ---------- */
@@ -653,6 +662,7 @@
   --muted: rgba(11, 11, 10, 0.62);
   --line: rgba(11, 11, 10, 0.12);
   --line-strong: rgba(11, 11, 10, 0.3);
+  --focus: var(--ink);
 }
 .plans .eyebrow {
   color: var(--muted);
@@ -709,7 +719,7 @@
   right: 2.4rem;
   padding: 0.5rem 1.2rem;
   border-radius: var(--pill);
-  background: var(--lime);
+  background: var(--bone);
   color: var(--ink);
   font-size: 1.2rem;
   font-weight: 600;
@@ -786,10 +796,16 @@
 .plan .btn {
   --bg: var(--ink);
   --fg: var(--bone);
+  --fill: var(--bone);
+  --fg-hover: var(--ink);
+  --ring: rgba(11, 11, 10, 0.3);
 }
 .plan--featured .btn {
   --bg: var(--bone);
   --fg: var(--ink);
+  --fill: var(--coal);
+  --fg-hover: var(--bone);
+  --ring: rgba(243, 239, 228, 0.42);
 }
 .plans__fine {
   margin-top: 3.2rem;
@@ -825,7 +841,8 @@
   font-variant-numeric: tabular-nums;
 }
 .fee__row--save strong {
-  color: var(--lime);
+  color: var(--bone);
+  font-weight: 600;
 }
 .plan__list--modal {
   padding-top: 0;
@@ -846,6 +863,7 @@
   --muted: rgba(11, 11, 10, 0.62);
   --line: rgba(11, 11, 10, 0.14);
   --line-strong: rgba(11, 11, 10, 0.3);
+  --focus: var(--ink);
 }
 .faq__top {
   display: flex;

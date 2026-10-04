@@ -1,6 +1,7 @@
-// Hero: the member card hovers over a chrome plinth in a dark stone room. The stone wall is drawn
-// in a shader (layered noise, lit from above), a band of mist sits on the horizon, and the floor is
-// a dark mirror. The card turns slowly, leans towards the pointer and tips away on scroll.
+// Hero: the member card hovers over a chrome plinth in a dark stone room. The wall is a photoscanned
+// rock face (Poly Haven rock_face_03, CC0) displaced into real relief and lit like a set: a raking key
+// from above that throws the rock's own shadows, and a cove uplight along its base. The floor is a dark
+// mirror. The card turns slowly, leans towards the pointer and tips away on scroll.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { Reflector } from 'three/addons/objects/Reflector.js';
@@ -11,78 +12,20 @@ import { makeCard, softboxEnvironment } from './card.js';
 
 const FLOOR_Y = -1.36;
 
-// Shared GLSL noise: value noise with a smooth fade, summed into fractal octaves.
-const NOISE = /* glsl */ `
-  float hash(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
-  float noise(vec2 p) {
-    vec2 i = floor(p), f = fract(p);
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
-  }
-  float fbm(vec2 p) {
-    float v = 0.0, a = 0.5;
-    mat2 r = mat2(0.8, -0.6, 0.6, 0.8);
-    for (int i = 0; i < 6; i++) { v += a * noise(p); p = r * p * 2.03 + 3.1; a *= 0.5; }
-    return v;
-  }
-`;
-
-const passVert = /* glsl */ `
-  varying vec2 vUv;
-  void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
-`;
-
-// Stone wall: a rock height field (fractal noise), shaded by its own slope against a light from
-// above — relief rather than veins. A pool of light behind the card, darker towards the base.
-const wallFrag = /* glsl */ `
-  uniform float uTime;
-  uniform vec2 uAspect;
-  varying vec2 vUv;
-  ${NOISE}
-  float height(vec2 p) { return fbm(p) + 0.45 * fbm(p * 3.1 + 11.0) + 0.12 * noise(p * 22.0); }
-  void main() {
-    vec2 p = vUv * uAspect * 2.2 + vec2(0.0, uTime * 0.002);
-    float e = 0.004;
-    float h = height(p);
-    vec2 g = vec2(height(p + vec2(e, 0.0)) - h, height(p + vec2(0.0, e)) - h) / e;
-    vec3 n = normalize(vec3(-g * 0.06, 1.0));
-    vec3 L = normalize(vec3(-0.25, 0.85, 0.55));
-    float lit = max(dot(n, L), 0.0);
-    float cavity = smoothstep(0.25, 0.9, h);
-    vec2 c = vUv - vec2(0.5, 0.6);
-    float pool = exp(-dot(c * vec2(1.0, 1.5), c * vec2(1.0, 1.5)) * 3.0);
-    float lift = smoothstep(0.02, 0.6, vUv.y);
-    float v = pow(lit, 2.2) * (0.25 + 0.75 * cavity);
-    vec3 col = vec3(0.86, 0.86, 0.84) * v * (0.01 + 0.16 * pool) * (0.2 + 0.8 * lift);
-    gl_FragColor = vec4(col, 1.0);
-    #include <colorspace_fragment>
-  }
-`;
-
-// Mist: a soft band hugging the horizon line, drifting slowly sideways, brightest at its base.
-const mistFrag = /* glsl */ `
-  uniform float uTime;
-  uniform float uOpacity;
-  varying vec2 vUv;
-  ${NOISE}
-  void main() {
-    vec2 p = vec2(vUv.x * 6.0 + uTime * 0.03, vUv.y * 2.0);
-    float n = fbm(p) * 0.7 + fbm(p * 2.3 - uTime * 0.02) * 0.5;
-    float band = smoothstep(0.08, 0.2, vUv.y) * (1.0 - smoothstep(0.2, 0.9, vUv.y));
-    float edge = smoothstep(0.0, 0.18, vUv.x) * smoothstep(1.0, 0.82, vUv.x);
-    float a = band * edge * smoothstep(0.3, 0.9, n) * uOpacity;
-    gl_FragColor = vec4(vec3(1.0, 0.99, 0.96) * 2.2, a);
-    #include <colorspace_fragment>
-  }
-`;
+const ROCK_TILE = 8; // world units per repeat of the scan: big formations, few visible repeats
+const WALL = { w: 32, h: 15, z: -7 };
 
 export async function initHero(canvas) {
   RectAreaLightUniformsLib.init();
   const renderer = makeRenderer(canvas, { alpha: false, clear: 0x0b0b0a, maxDpr: 2 });
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
+  // two passes: the backdrop (rock wall and its own two lights) is drawn first, then the plinth and
+  // card scene on top. Rect-area lights have no falloff, so the plinth's softboxes would otherwise
+  // wash the whole wall flat.
+  const backdrop = new THREE.Scene();
+  backdrop.background = new THREE.Color(0x0b0b0a);
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0b0b0a);
   scene.environment = softboxEnvironment(renderer);
   scene.environmentIntensity = 1;
 
@@ -90,14 +33,49 @@ export async function initHero(canvas) {
   const camBase = new THREE.Vector3(0, 0.55, 8.4);
   camera.position.copy(camBase);
 
-  // stone wall behind everything, sized in layout() to overfill the frustum
-  const wallUniforms = { uTime: { value: 0 }, uAspect: { value: new THREE.Vector2(1.6, 1) } };
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
-    vertexShader: passVert, fragmentShader: wallFrag, uniforms: wallUniforms, depthWrite: false,
-  }));
-  wall.position.z = -7;
-  wall.renderOrder = -1;
-  scene.add(wall);
+  // rock wall: one wide displaced sheet standing on the floor, self-shadowed by a raking key light
+  const loader = new THREE.TextureLoader();
+  const rockTex = (url, srgb) => loader.loadAsync(url).then((t) => {
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(WALL.w / ROCK_TILE, WALL.h / ROCK_TILE);
+    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  });
+  const [rockAlbedo, rockNormal, rockData] = await Promise.all([
+    rockTex('/hero/rock-albedo.webp', true), rockTex('/hero/rock-normal.webp'), rockTex('/hero/rock-data.webp'),
+  ]);
+  const wall = new THREE.Mesh(
+    new THREE.PlaneGeometry(WALL.w, WALL.h, coarse ? 192 : 320, coarse ? 90 : 150),
+    new THREE.MeshStandardMaterial({
+      map: rockAlbedo, normalMap: rockNormal, normalScale: new THREE.Vector2(1.3, 1.3),
+      displacementMap: rockData, displacementScale: 0.9, displacementBias: -0.45, // r: height
+      roughnessMap: rockData, roughness: 1, metalness: 0, // g: roughness
+    }),
+  );
+  wall.position.set(0, FLOOR_Y - 0.35 + WALL.h / 2, WALL.z);
+  wall.castShadow = wall.receiveShadow = true;
+  backdrop.add(wall);
+
+  // key: high and close to the wall, so light grazes the relief and every ledge drops a shadow
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.shadowMap.autoUpdate = false; // wall and light never move: render the shadow once
+  const key = new THREE.SpotLight(0xe9edf1, 72, 0, 0.44, 1, 2);
+  key.position.set(0.4, 10.5, WALL.z + 3.4);
+  key.target.position.set(0, -0.2, WALL.z);
+  key.castShadow = true;
+  key.shadow.mapSize.set(coarse ? 1024 : 2048, coarse ? 1024 : 2048);
+  key.shadow.bias = -0.0004;
+  key.shadow.normalBias = 0.03;
+  key.shadow.radius = 3;
+  backdrop.add(key, key.target);
+  // cove: a long strip at the foot of the wall washing up the rock, so the base glows instead of
+  // ending in a hard line against the floor
+  const cove = new THREE.RectAreaLight(0xeef0f2, 8, WALL.w, 0.18);
+  cove.position.set(0, FLOOR_Y + 0.02, WALL.z + 0.55);
+  cove.lookAt(0, FLOOR_Y + 1.6, WALL.z);
+  backdrop.add(cove);
 
   // lights: two soft panels above the plinth for long chrome highlights, a cool rim behind
   const panelA = new THREE.RectAreaLight(0xffffff, 16, 4.5, 0.6);
@@ -147,15 +125,21 @@ export async function initHero(canvas) {
   smoke.rotation.x = -Math.PI / 2;
   smoke.position.y = FLOOR_Y + 0.004;
   scene.add(smoke);
-
-  // horizon mist, in front of the wall and behind the plinth
-  const mistUniforms = { uTime: { value: 0 }, uOpacity: { value: 0.9 } };
-  const mist = new THREE.Mesh(new THREE.PlaneGeometry(34, 2.2), new THREE.ShaderMaterial({
-    vertexShader: passVert, fragmentShader: mistFrag, uniforms: mistUniforms,
+  // the cove's spill on the floor: a soft band fading from the foot of the wall towards the plinth
+  const spill = new THREE.Mesh(new THREE.PlaneGeometry(WALL.w, 3.2), new THREE.ShaderMaterial({
+    vertexShader: /* glsl */ `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: /* glsl */ `
+      varying vec2 vUv;
+      void main() {
+        float a = pow(vUv.y, 5.0) * smoothstep(0.0, 0.25, vUv.x) * smoothstep(1.0, 0.75, vUv.x);
+        gl_FragColor = vec4(vec3(0.93, 0.94, 0.95) * 0.28, a);
+      }`,
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
   }));
-  mist.position.set(0, FLOOR_Y + 0.9, -6.6);
-  scene.add(mist);
+  spill.rotation.x = -Math.PI / 2;
+  spill.position.set(0, FLOOR_Y + 0.006, WALL.z + 1.6);
+  spill.renderOrder = 2; // over the smoked sheet
+  scene.add(spill);
 
   const card = await makeCard({ finish: 'polished' });
   const holder = new THREE.Group();
@@ -199,16 +183,11 @@ export async function initHero(canvas) {
     camBase.set(0, portrait ? 1.2 : 0.95, (portrait ? 12.5 : 8.4) + wide);
     lookAt.y = portrait ? 1.25 : 0.78;
     cardY = portrait ? 0.95 : 0.36;
-    // wall overfills the view at its depth, whatever the aspect
-    const d = camBase.z - wall.position.z;
-    const h = 2 * d * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 1.25;
-    wall.scale.set(h * camera.aspect, h, 1);
-    wall.position.y = lookAt.y;
-    wallUniforms.uAspect.value.set(camera.aspect, 1);
     if (!degraded) renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.5 : 2));
   };
   layout();
   addEventListener('resize', layout);
+  renderer.shadowMap.needsUpdate = true;
 
   let t = 0;
   let last = performance.now();
@@ -218,7 +197,7 @@ export async function initHero(canvas) {
       samples.push(now - last);
       if (samples.length === 40) {
         const median = [...samples].sort((a, b) => a - b)[20];
-        if (median > 36) degrade();
+        if (median > 36 && !/[?&]hq\b/.test(location.search)) degrade(); // ?hq: keep full quality (captures)
       }
     }
     last = now;
@@ -233,9 +212,9 @@ export async function initHero(canvas) {
     holder.rotation.z = Math.sin(t * 0.5) * 0.012;
     camera.position.set(camBase.x + pointer.x * 0.25, camBase.y - pointer.y * 0.12 + p * 0.6, camBase.z + (1 - e) * 1.5 + p * 1.2);
     camera.lookAt(lookAt);
-    wallUniforms.uTime.value = t;
-    mistUniforms.uTime.value = t;
-    mistUniforms.uOpacity.value = 0.35 + 0.55 * e;
+    renderer.autoClear = true;
+    renderer.render(backdrop, camera);
+    renderer.autoClear = false;
     renderer.render(scene, camera);
     if (!canvas.dataset.drawn) canvas.dataset.drawn = '1';
   };

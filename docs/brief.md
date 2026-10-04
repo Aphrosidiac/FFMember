@@ -22,7 +22,7 @@ FAQ and modal flows. Every line of code, every word and every image is FF's own 
 - **Owner / brand:** FF Dev Studio (FF DEV STUDIO, 202603234793), Kuala Lumpur.
 - **Brand kit:** `~/Desktop/dev/ffdevstudio/brand-system` — FF mark and lockup SVGs, Instrument Sans
   only (SIL OFL; the kit's serif italic is not used on this site), palette Ink #0B0B0A, Bone #F3EFE4, Graphite #242421, Field Grey #8B8981,
-  Signal Lime #D9FF43 (sparse signal only).
+  no Signal Lime on this site (Fakhrul, 2026-10-04): contrast does the signalling.
 - **Facts used in copy:** `~/Desktop/dev/ffdevstudio/SERVICE_ARCHITECTURE.md` (plan prices, inclusions,
   exclusions, client process, 30-day defect warranty) and `PhantomClone/src/data.js` (project list).
   No invented statistics, testimonials or clients.

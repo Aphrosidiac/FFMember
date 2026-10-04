@@ -23,7 +23,7 @@ export async function initReveals(root = document) {
     void split;
   }
   // Eyebrows, leads, buttons and list items fade up.
-  const fades = root.querySelectorAll('[data-fade], .plans__head .eyebrow, .plans__toggle, .faq__top .lead, .plans__fine, .footer__cta-side, .banner__inner > :not(h2), .support__list, .support__clocks, .covers__count');
+  const fades = root.querySelectorAll('[data-fade], .plans__head .eyebrow, .plans__toggle, .faq__top .lead, .plans__fine, .footer__cta-side, .banner__inner > :not(h2), .support__list, .support__clocks, .covers__head .eyebrow');
   for (const el of fades) {
     gsap.from(el, { opacity: 0, y: 24, duration: 1, ease: 'power3.out',
       scrollTrigger: { trigger: el, start: 'top 90%', once: true } });

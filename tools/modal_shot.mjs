@@ -1,0 +1,25 @@
+// modal_shot.mjs — open the membership dialog and photograph it: node tools/modal_shot.mjs <url> <out-prefix> [WxH]
+import { launch, context, sleep } from './browser.mjs';
+const [url, out, wh = '1440x900'] = process.argv.slice(2);
+const [w, h] = wh.split('x').map(Number);
+const browser = await launch();
+const ctx = await context(browser, { w, h, init: "try{sessionStorage.setItem('ff-intro','1')}catch{}" });
+const page = await ctx.newPage();
+page.on('pageerror', (e) => console.log('[pageerror]', e.message));
+await page.goto(url, { waitUntil: 'load', timeout: 90000 });
+await sleep(3000);
+await page.evaluate(() => document.querySelector('[data-join]').click());
+await sleep(1500);
+await page.screenshot({ path: `${out}-open.png` });
+await page.evaluate(() => document.querySelector('[data-join-form] [type=submit]')?.click());
+await sleep(800);
+await page.screenshot({ path: `${out}-errors.png` });
+await page.fill('#j-name', 'Aina Rahman');
+await page.fill('#j-email', 'aina@example.com');
+await page.fill('#j-site', 'example.com');
+await page.selectOption('#j-plan', 'maintain');
+await page.evaluate(() => { document.querySelector('[name=period][value=yearly]').click(); document.querySelector('[name=consent]').click(); });
+await page.evaluate(() => document.querySelector('[data-join-form] [type=submit]').click());
+await sleep(900);
+await page.screenshot({ path: `${out}-done.png` });
+await browser.close();

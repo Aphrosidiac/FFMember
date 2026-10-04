@@ -3,6 +3,7 @@
 import { startScroll, gsap, ScrollTrigger, reduced, scrollTo } from './motion.js';
 import { initClocks } from './clock.js';
 import { initNav } from './nav.js';
+import { initButtons } from './buttons.js';
 import { initModals } from './modal.js';
 import { playIntro } from './intro.js';
 import { initReveals } from './reveal.js';
@@ -18,6 +19,7 @@ import { webglAvailable } from './gl/support.js';
 const page = document.body.dataset.page;
 startScroll();
 initClocks();
+initButtons();
 initNav();
 initModals();
 initAccordion();

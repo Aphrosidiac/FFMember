@@ -1,4 +1,5 @@
-// Fixed nav: hides on scroll down, returns on scroll up, gains a backing past the hero.
+// Fixed nav: hides on scroll down, returns on scroll up, gains glass capsules past the hero and
+// flips to ink over bone sections ([data-nav-theme="light"]). A single pill slides between links.
 // Burger opens a full-screen menu with focus kept inside it.
 import { lockScroll, scrollTo, lenis } from './motion.js';
 
@@ -6,12 +7,14 @@ export function initNav() {
   const nav = document.querySelector('[data-nav]');
   if (!nav) return;
   let last = 0;
+  let update = () => {};
   const onScroll = (y) => {
     nav.classList.toggle('is-scrolled', y > 40);
     const open = document.documentElement.classList.contains('menu-open');
     if (!open) nav.classList.toggle('is-hidden', y > 200 && y > last + 2);
     if (y < last - 2) nav.classList.remove('is-hidden');
     last = y;
+    update();
   };
   if (lenis) lenis.on('scroll', (l) => onScroll(l.scroll));
   else addEventListener('scroll', () => onScroll(scrollY), { passive: true });
@@ -24,6 +27,7 @@ export function initNav() {
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     menu.inert = !open;
     lockScroll(open);
+    update();
     if (open) menu.querySelector('a, button')?.focus({ preventScroll: true });
   };
   if (burger && menu) {
@@ -49,14 +53,44 @@ export function initNav() {
     history.replaceState(null, '', url.hash === '#top' ? location.pathname : url.hash);
   });
 
-  // Highlight the section the reader is in.
+  // Theme and current section, both read from what sits under the nav / the middle of the screen.
+  const box = nav.querySelector('.nav__links');
   const hashOf = (l) => new URL(l.href, location.href).hash;
   const links = location.pathname === '/' ? [...nav.querySelectorAll('.nav__link')].filter((l) => hashOf(l)) : [];
-  const io = new IntersectionObserver((entries) => {
-    for (const en of entries) {
-      if (!en.isIntersecting) continue;
-      for (const l of links) l.classList.toggle('is-current', hashOf(l) === '#' + en.target.id);
-    }
-  }, { rootMargin: '-45% 0px -50% 0px' });
-  links.forEach((l) => { const s = document.querySelector(hashOf(l)); if (s) io.observe(s); });
+  const targets = links.map((l) => document.querySelector(hashOf(l)));
+  const light = [...document.querySelectorAll('[data-nav-theme="light"]')];
+  const pill = document.createElement('span');
+  pill.className = 'nav__pill no-anim';
+  pill.setAttribute('aria-hidden', 'true');
+  box?.prepend(pill);
+  let current = box?.querySelector('.nav__link.is-current') || null;
+  let hovering = false;
+  const place = (l) => {
+    pill.classList.toggle('is-placed', !!l);
+    if (!l) return;
+    pill.style.width = `${l.offsetWidth}px`;
+    pill.style.transform = `translateX(${l.offsetLeft}px)`;
+    requestAnimationFrame(() => pill.classList.remove('no-anim'));
+  };
+  if (box) {
+    box.addEventListener('pointerover', (e) => { const l = e.target.closest('.nav__link'); if (l) { hovering = true; place(l); } });
+    box.addEventListener('pointerleave', () => { hovering = false; place(current); });
+  }
+  update = () => {
+    const navMid = nav.offsetHeight / 2;
+    const onLight = light.some((s) => { const r = s.getBoundingClientRect(); return r.top <= navMid && r.bottom > navMid; });
+    nav.classList.toggle('is-light', onLight && !document.documentElement.classList.contains('menu-open'));
+    if (!links.length) return;
+    const mid = innerHeight / 2;
+    let next = null;
+    targets.forEach((t, i) => { if (!t) return; const r = t.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) next = links[i]; });
+    if (next === current) return;
+    links.forEach((l) => l.classList.toggle('is-current', l === next));
+    current = next;
+    if (!hovering) place(current);
+  };
+  update();
+  place(current);
+  addEventListener('resize', () => place(current));
+  document.fonts?.ready.then(() => place(current));
 }

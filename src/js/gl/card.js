@@ -98,9 +98,9 @@ async function paintFaces() {
   c.font = '500 58px "Instrument Sans"';
   c.letterSpacing = '14px';
   c.fillText('MEMBER', 110, 160);
-  c.fillStyle = '#d9ff43';
+  c.fillStyle = 'rgba(243,239,228,0.55)';
   c.beginPath();
-  c.arc(W - 128, 140, 15, 0, Math.PI * 2);
+  c.arc(W - 128, 140, 12, 0, Math.PI * 2);
   c.fill();
   chip(c, 110, H * 0.62, 230, 176);
   c.letterSpacing = '6px';

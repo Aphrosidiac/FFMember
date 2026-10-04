@@ -1,6 +1,7 @@
 // Membership and plan-detail dialogs. Focus is trapped inside, Escape and the veil close them,
 // and focus returns to the control that opened them. The join form validates locally and then
 // prepares an email draft — nothing on this page sends data anywhere.
+import { setButtonText } from './buttons.js';
 import { lockScroll } from './motion.js';
 
 export const PLANS = {
@@ -101,7 +102,7 @@ function fillPlan(modal, key) {
     if (t.startsWith('No ')) li.className = 'is-off';
     return li;
   }));
-  modal.querySelector('[data-plan-join]').textContent = 'Choose ' + p.name;
+  setButtonText(modal.querySelector('[data-plan-join]'), 'Choose ' + p.name);
 }
 
 function showStep(modal, step) {
