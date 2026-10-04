@@ -244,9 +244,6 @@
   letter-spacing: -0.07em;
   line-height: 0.8;
 }
-.lost__code .serif {
-  font-weight: 400;
-}
 .lost .lead {
   max-width: 40ch;
 }

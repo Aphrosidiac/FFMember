@@ -6,4 +6,4 @@ Globe textures in public/globe/ are resized from NASA Visible Earth (public doma
 - Cloud combined (record 57747) → blue channel of data.webp
 
 Work screenshots in public/work/ are FF Dev Studio's own projects, copied from PhantomClone/public/media.
-Fonts: Instrument Sans / Instrument Serif, SIL OFL (public/fonts). Marks: ffdevstudio/brand-system.
+Fonts: Instrument Sans, SIL OFL (public/fonts). Marks: ffdevstudio/brand-system.

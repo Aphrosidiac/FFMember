@@ -75,7 +75,6 @@ async function paintFaces() {
   const H = Math.round((W * 53.98) / 85.6);
   const mark = await loadImage('/brand/ff-mark-white.svg');
   await document.fonts.load('500 64px "Instrument Sans"').catch(() => {});
-  await document.fonts.load('italic 64px "Instrument Serif"').catch(() => {});
 
   // colour — front
   const front = document.createElement('canvas');
@@ -109,10 +108,10 @@ async function paintFaces() {
   c.font = '500 50px "Instrument Sans"';
   c.fillText('FF DEV STUDIO', 110, H - 120);
   c.fillStyle = 'rgba(243,239,228,0.5)';
-  c.font = 'italic 54px "Instrument Serif"';
-  c.letterSpacing = '0px';
+  c.font = '500 50px "Instrument Sans"';
+  c.letterSpacing = '6px';
   c.textAlign = 'right';
-  c.fillText('Kuala Lumpur', W - 110, H - 120);
+  c.fillText('KUALA LUMPUR', W - 110, H - 120);
 
   // colour — back
   const back = document.createElement('canvas');
@@ -129,9 +128,10 @@ async function paintFaces() {
   c.drawImage(mark, 110, 110, bw, (bw * 72) / 194);
   c.globalAlpha = 1;
   c.fillStyle = 'rgba(243,239,228,0.9)';
-  c.font = 'italic 112px "Instrument Serif"';
+  c.font = '500 104px "Instrument Sans"';
+  c.letterSpacing = '-3px';
   c.fillText('Kept in care,', 110, H * 0.56);
-  c.fillText('every month.', 110, H * 0.56 + 118);
+  c.fillText('every month.', 110, H * 0.56 + 116);
   c.fillStyle = 'rgba(243,239,228,0.55)';
   c.font = '500 40px "Instrument Sans"';
   c.letterSpacing = '3px';

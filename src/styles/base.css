@@ -7,19 +7,6 @@
   font-stretch: 75% 100%;
   font-display: swap;
 }
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/InstrumentSerif-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/InstrumentSerif-Italic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
 
 :root {
   --ink: #0b0b0a;
@@ -35,7 +22,6 @@
   --muted: rgba(243, 239, 228, 0.62);
 
   --sans: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --serif: 'Instrument Serif', 'Times New Roman', serif;
 
   /* fluid scale: 360px → 1920px */
   --t-mega: clamp(5.2rem, 1.6rem + 12vw, 22rem);
@@ -213,12 +199,6 @@ ol {
   font-size: var(--t-h3);
   letter-spacing: -0.02em;
   line-height: 1.05;
-}
-.serif {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.02em;
 }
 .lead {
   font-size: var(--t-lead);
