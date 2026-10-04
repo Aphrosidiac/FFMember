@@ -124,9 +124,9 @@
 
 .intro__meta {
   position: absolute;
-  left: var(--gutter);
-  right: var(--gutter);
-  bottom: calc(var(--gutter) + 2.4rem);
+  left: var(--pad-l);
+  right: var(--pad-r);
+  bottom: calc(var(--gutter) + 2.4rem + env(safe-area-inset-bottom, 0px));
   display: flex;
   justify-content: space-between;
   align-items: end;
@@ -174,9 +174,9 @@
 }
 .intro__bar {
   position: absolute;
-  left: var(--gutter);
-  right: var(--gutter);
-  bottom: var(--gutter);
+  left: var(--pad-l);
+  right: var(--pad-r);
+  bottom: calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
   height: 1px;
   background: var(--line);
 }
@@ -246,6 +246,12 @@
   background: linear-gradient(transparent, rgba(11, 11, 10, 0.92) 70%, var(--ink));
   pointer-events: none;
 }
+/* portrait: hero.js pins the shade to the plinth's front edge, so the chrome greys as it does on desktop */
+.hero__shade.is-fit {
+  top: var(--shade-top);
+  height: auto;
+  background: linear-gradient(rgba(11, 11, 10, 0.45), rgba(11, 11, 10, 0.86) var(--shade-len), var(--ink) calc(var(--shade-len) + 14rem));
+}
 .hero__head {
   display: grid;
   justify-items: center;
@@ -263,6 +269,20 @@
   gap: 1.6rem;
   padding-bottom: clamp(4rem, 8vh, 8rem);
   text-align: center;
+}
+
+/* a phone on its side: the hero is the screen, not 600px of it */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero {
+    min-height: 0;
+  }
+  .hero__head {
+    padding-top: 7.2rem;
+  }
+  .hero__foot {
+    gap: 0.8rem;
+    padding-bottom: 2rem;
+  }
 }
 
 /* ---------- 02 globe ---------- */
@@ -348,8 +368,14 @@
   border-width: 0 0 1.5px 1.5px;
   transform: rotate(-45deg);
 }
+@media (orientation: landscape) and (max-height: 500px) {
+  .globe__head { padding-top: 8.4rem; }
+  .globe__head .lead { max-width: 60ch; padding: 1.2rem 0 2rem; }
+  .globe__toasts { height: 32vmin; }
+  .globe__toasts li { font-size: 1.3rem; padding: 1.1rem 1.8rem; }
+}
 @media (max-width: 992px) {
-  .globe__head { max-width: 100%; padding-inline: var(--gutter); }
+  .globe__head { max-width: 100%; padding-inline: var(--pad-l) var(--pad-r); }
   .globe__toasts { width: 100%; height: 50vh; max-height: 60vmin; }
 }
 @media (max-width: 772px) {
@@ -405,6 +431,15 @@
 }
 .tube__copy .h1 {
   max-width: 16ch;
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .tube__copy {
+    bottom: 2rem;
+    gap: 1.2rem;
+  }
+  .tube__copy .h1 {
+    max-width: none;
+  }
 }
 .tube__rotator {
   display: flex;
@@ -464,6 +499,7 @@
   border-radius: var(--radius);
   background: radial-gradient(closest-side, var(--bone) 60%, rgba(243, 239, 228, 0));
   align-self: center;
+  justify-self: center; /* sized to its text: a full-width box sliced the figures passing its band */
   display: grid;
   gap: 0.6rem;
   justify-items: center;
@@ -493,10 +529,11 @@
 .figures__arc--left .figure { right: 22%; }
 .figures__arc--right .figure { left: 22%; }
 @media (max-width: 700px) {
-  .figures__arc--left .figure { right: 34%; }
-  .figures__arc--right .figure { left: 34%; }
-  .figure { font-size: 1.6rem; }
-  .figures__list { font-size: 1.5rem; }
+  /* the columns run clear of the centre list, which would otherwise slice them at its edge */
+  .figures__arc--left .figure { right: clamp(8.4rem, 24vw, 9.6rem); }
+  .figures__arc--right .figure { left: clamp(8.4rem, 24vw, 9.6rem); }
+  .figure { font-size: clamp(1.4rem, 0.4rem + 2.8vw, 1.6rem); }
+  .figures__list { font-size: clamp(1.3rem, 0.5rem + 2.4vw, 1.5rem); padding: 1.2rem 1.6rem; }
 }
 
 /* ---------- 05 support ---------- */
@@ -564,6 +601,11 @@
   color: var(--muted);
   margin-bottom: 0.4rem;
 }
+@media (orientation: landscape) and (max-height: 500px) {
+  .support__plate {
+    width: 58vw;
+  }
+}
 @media (max-width: 760px) {
   .support__inner {
     grid-template-columns: 1fr;
@@ -610,6 +652,17 @@
 .reveal__plate img {
   width: 100%;
   border-radius: 0.8rem;
+}
+/* portrait: a tall crop of the screenshot, so the opened window is filled rather than a strip */
+@media (orientation: portrait) and (max-width: 860px) {
+  .reveal__plate {
+    width: 84vw;
+  }
+  .reveal__plate img {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 0;
+  }
 }
 .reveal__window::after {
   content: '';
@@ -710,14 +763,37 @@
 .covers__list p {
   max-width: 40ch;
 }
-@media (max-width: 960px) {
+/* stacked (portrait): the plate sticks above the list. A phone on its side keeps the two columns
+   instead, since a full-width plate would be taller than the screen and hide the list. */
+@media (max-width: 960px) and (orientation: portrait), (max-width: 600px) {
   .covers__grid {
     grid-template-columns: 1fr;
   }
   .covers__media {
     top: 7.6rem;
     z-index: 2;
+    /* a bone margin around the stuck plate fills its rounded corners, so rows scrolling behind it
+       don't show through them */
+    box-shadow: 0 0 0 1.6rem var(--bone);
   }
+  /* a bone band that sticks above the plate, so rows scrolling up behind it don't show between the
+     plate and the top of the screen. In flow it sits behind the plate (negative margin), out of sight. */
+  .covers__grid::before {
+    content: '';
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    height: 7.6rem;
+    margin-bottom: calc(-7.6rem - clamp(3rem, 5vw, 8rem));
+    background: var(--bone);
+  }
+}
+@media (max-width: 960px) and (orientation: landscape) and (min-width: 601px) {
+  .covers__media {
+    top: 8.4rem;
+  }
+}
+@media (max-width: 960px) {
   .covers__list li {
     grid-template-columns: 4rem 1fr;
     color: var(--ink);
@@ -1105,6 +1181,11 @@
   .faq__group {
     grid-template-columns: 1fr;
     gap: 0;
+    padding-block: 2.8rem 1.2rem;
+  }
+  .faq__cat {
+    padding-top: 0;
+    margin-bottom: 0.4rem;
   }
   .faq__a > div {
     padding-right: 0;

@@ -96,6 +96,8 @@ export async function initGlobe(canvas, { section, header, chips }) {
     if (`${w}x${h}` === last) return;
     last = `${w}x${h}`;
     camera.aspect = w / h;
+    // a phone on its side: the planet sits lower so it clears the copy above it
+    camera.position.y = h < 500 && w / h > 1.3 ? 0.55 : 0.2;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
   };

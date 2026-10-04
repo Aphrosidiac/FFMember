@@ -8,9 +8,11 @@ import { Reflector } from 'three/addons/objects/Reflector.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import { gsap, ScrollTrigger, reduced, coarse } from '../motion.js';
 import { makeRenderer, fit, runWhileVisible } from './stage.js';
-import { makeCard, softboxEnvironment, CARD_W } from './card.js';
+import { makeCard, softboxEnvironment, CARD_W, CARD_H } from './card.js';
 
 const FLOOR_Y = -1.36;
+const CARD_SCALE = 0.86;
+const CARD_REST = 0.36; // the card's height above the plinth, where it hovers on every screen
 
 const ROCK_TILE = 8; // world units per repeat of the scan: big formations, few visible repeats
 const WALL = { w: 32, h: 15, z: -7 };
@@ -92,22 +94,25 @@ export async function initHero(canvas) {
   // plinth: polished chrome block on a darker base, with lit seams between the tiers
   const chrome = new THREE.MeshPhysicalMaterial({ color: 0xcfcfcc, metalness: 1, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.4 });
   const smoked = new THREE.MeshPhysicalMaterial({ color: 0x141413, metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 });
+  // the plinth is one group so a phone can narrow it to the screen (the riser keeps its size)
+  const plinth = new THREE.Group();
   const top = new THREE.Mesh(new RoundedBoxGeometry(4.6, 0.36, 2.1, 6, 0.03), chrome);
   top.position.set(0, -0.62, 0);
   const base = new THREE.Mesh(new RoundedBoxGeometry(4.5, 0.5, 2.0, 6, 0.02), smoked);
   base.position.set(0, -1.11, 0);
-  scene.add(top, base);
+  plinth.add(top, base);
+  scene.add(plinth);
   const topMirror = new Reflector(new THREE.PlaneGeometry(4.5, 2.0), {
     textureWidth: coarse ? 512 : 1024, textureHeight: coarse ? 512 : 1024, color: 0x8a8a88, clipBias: 0.002,
   });
   topMirror.rotation.x = -Math.PI / 2;
   topMirror.position.set(0, -0.4385, 0);
-  scene.add(topMirror);
+  plinth.add(topMirror);
   const seamMat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
   for (const [y, w] of [[-0.442, 4.56], [-0.803, 4.56], [-1.35, 4.5]]) {
     const seam = new THREE.Mesh(new THREE.BoxGeometry(w, 0.007, 0.007), seamMat);
     seam.position.set(0, y, 1.06);
-    scene.add(seam);
+    plinth.add(seam);
   }
   // a low riser under the card
   const riser = new THREE.Mesh(new RoundedBoxGeometry(2.2, 0.05, 0.6, 3, 0.015), chrome);
@@ -144,7 +149,7 @@ export async function initHero(canvas) {
   const card = await makeCard({ finish: 'polished' });
   const holder = new THREE.Group();
   holder.add(card);
-  holder.scale.setScalar(0.86);
+  holder.scale.setScalar(CARD_SCALE);
   scene.add(holder);
 
   const lookAt = new THREE.Vector3(0, -0.55, 0);
@@ -175,18 +180,71 @@ export async function initHero(canvas) {
     canvas.dataset.quality = 'low';
   };
 
-  let cardY = 0.42;
+  // Phones: the card and plinth are fitted into the band between the headline and the call to
+  // action, measured from the page, so neither text sits on the chrome. The camera backs off
+  // until the card is about two thirds of the screen wide and the whole set fits the band; the
+  // plinth narrows to the screen; the look-at point is solved so the set is centred in the band.
+  const section = canvas.closest('section');
+  const head = section.querySelector('.hero__head');
+  const foot = section.querySelector('.hero__foot');
+  const shade = section.querySelector('.hero__shade');
+  const SET_TOP = CARD_REST + (CARD_H * CARD_SCALE) / 2 + 0.06; // card top, with its hover
+  const SET_BOTTOM = FLOOR_Y; // foot of the plinth
+  const probe = new THREE.Vector3();
   const layout = () => {
     fit(renderer, camera, canvas);
-    const portrait = camera.aspect < 0.9;
-    const wide = camera.aspect > 1.85 ? (camera.aspect - 1.85) * 2.2 : 0;
-    camBase.set(0, portrait ? 1.2 : 0.95, (portrait ? 12.5 : 8.4) + wide);
-    lookAt.y = portrait ? 1.25 : 0.78;
-    cardY = portrait ? 0.95 : 0.36;
+    const a = camera.aspect;
+    const H = canvas.clientHeight || innerHeight;
+    const portrait = a < 0.9;
+    if (!portrait && H >= 500) {
+      const wide = a > 1.85 ? (a - 1.85) * 2.2 : 0;
+      camBase.set(0, 0.95, 8.4 + wide);
+      lookAt.y = 0.78;
+      plinth.scale.x = 1;
+      shade?.classList.remove('is-fit');
+    } else {
+      // Portrait fits the whole set into the band. A phone on its side has no room for that, so as on
+      // desktop the call to action sits over the plinth's front and only the card and riser are fitted.
+      const bottom = portrait ? SET_BOTTOM : -0.44;
+      const k = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)); // view height per unit distance
+      const bandTop = head.offsetTop + head.offsetHeight + (portrait ? 28 : 16);
+      const bandBottom = foot.offsetTop - (portrait ? 28 : 8);
+      const band = Math.max(bandBottom - bandTop, H * 0.3);
+      const byWidth = portrait ? (CARD_W * CARD_SCALE) / (0.66 * k * a) : 0;
+      const byHeight = ((SET_TOP - bottom) * H) / (k * band);
+      const d = Math.max(byWidth, byHeight, 8.4);
+      plinth.scale.x = portrait ? Math.min(1, (0.9 * k * d * a) / 4.6) : 1;
+      camBase.set(0, -0.44 + 0.165 * d, d);
+      // solve the look-at height that puts the middle of the set at the middle of the band
+      const want = (bandTop + Math.min(bandBottom, bandTop + band)) / 2;
+      lookAt.y = 0;
+      for (let i = 0; i < 4; i++) {
+        camera.position.copy(camBase);
+        camera.lookAt(lookAt);
+        camera.updateMatrixWorld();
+        const y = ((1 - probe.set(0, (SET_TOP + bottom) / 2, 0).project(camera).y) / 2) * H;
+        lookAt.y -= ((y - want) * k * d) / H;
+      }
+      // On desktop the bottom shade falls across the plinth's chrome front and greys it; in portrait
+      // the plinth sits higher than that, so the shade is pinned to the plinth's front edge instead.
+      if (shade && portrait) {
+        camera.position.copy(camBase);
+        camera.lookAt(lookAt);
+        camera.updateMatrixWorld();
+        const yOf = (wy) => ((1 - probe.set(0, wy, 1.05).project(camera).y) / 2) * H;
+        const from = yOf(-0.43);
+        shade.style.setProperty('--shade-top', `${from.toFixed(1)}px`);
+        shade.style.setProperty('--shade-len', `${(yOf(FLOOR_Y) - from).toFixed(1)}px`);
+        shade.classList.add('is-fit');
+      } else {
+        shade?.classList.remove('is-fit');
+      }
+    }
     if (!degraded) renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.5 : 2));
   };
   layout();
   addEventListener('resize', layout);
+  document.fonts?.ready.then(layout); // the headline's height sets the band on a phone
   renderer.shadowMap.needsUpdate = true;
 
   let t = 0;
@@ -206,7 +264,7 @@ export async function initHero(canvas) {
     pointer.y += (pointer.ty - pointer.y) * 0.05;
     const e = enter.v;
     const p = out.p;
-    holder.position.y = cardY + Math.sin(t * 0.9) * 0.04 - (1 - e) * 0.6;
+    holder.position.y = CARD_REST + Math.sin(t * 0.9) * 0.04 - (1 - e) * 0.6;
     holder.rotation.y = Math.sin(t * 0.35) * 0.28 + pointer.x * 0.2 - (1 - e) * 1.4 + p * 1.1;
     holder.rotation.x = -0.04 + pointer.y * 0.06 + p * 0.25;
     holder.rotation.z = Math.sin(t * 0.5) * 0.012;

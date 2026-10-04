@@ -117,6 +117,8 @@ export async function initTube(canvas, { section, copy }) {
     const narrow = camera.aspect < 0.9;
     camera.position.z = narrow ? 7.6 : 6.6;
     camera.fov = narrow ? 58 : 48;
+    // a phone on its side: the copy fills the lower half, so the card rides in the upper half
+    camera.position.y = innerHeight < 500 && camera.aspect > 1.3 ? -0.95 : 0;
     camera.updateProjectionMatrix();
   };
   layout();

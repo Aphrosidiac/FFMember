@@ -2,7 +2,7 @@
 // and focus returns to the control that opened them. The join form validates locally and then
 // prepares an email draft — nothing on this page sends data anywhere.
 import { setButtonText } from './buttons.js';
-import { lockScroll } from './motion.js';
+import { lockScroll, coarse } from './motion.js';
 
 export const PLANS = {
   care: { name: 'Care', month: 59, items: ['Managed hosting, SSL and CDN', 'Uptime monitoring', 'Backups or version recovery appropriate to the stack', 'Security and dependency maintenance', 'Fixes for defects in FF-delivered work', 'No routine content changes'] },
@@ -28,7 +28,13 @@ function open(modal, from) {
   // waiting a frame (a busy WebGL frame can hold rAF long enough to lose the open state)
   void modal.offsetWidth;
   modal.classList.add('is-open');
-  const first = modal.querySelector('input, select, [data-plan-join], [data-done-title]') || focusables(modal)[0];
+  // On a touch screen focusing a field throws the keyboard up over the dialog before it is read, so
+  // focus goes to the dialog's title instead (screen readers still start inside the dialog).
+  let first = modal.querySelector('input, select, [data-plan-join], [data-done-title]') || focusables(modal)[0];
+  if (coarse && first?.matches('input, select, textarea')) {
+    first = modal.querySelector('h2');
+    first?.setAttribute('tabindex', '-1');
+  }
   first?.focus({ preventScroll: true });
   lockScroll(true);
   openModal = modal;

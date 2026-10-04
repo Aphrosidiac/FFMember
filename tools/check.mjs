@@ -121,7 +121,9 @@ for (const path of PAGES) {
   await page.keyboard.press('Escape');
   await sleep(700);
 
-  // join form: empty submit
+  // join form: empty submit. The nav hides on the way down; a small scroll up brings it back.
+  const showNav = async () => { await page.mouse.wheel(0, -160); await sleep(900); };
+  await showNav();
   await page.click('.nav__cta');
   await sleep(700);
   await page.selectOption('#j-plan', '');
@@ -175,6 +177,7 @@ for (const path of PAGES) {
   ok('join: close button closes', await page.evaluate(() => !document.querySelector('.modal.is-open')));
 
   // focus trap
+  await showNav();
   await page.click('.nav__cta');
   await sleep(700);
   for (let i = 0; i < 25; i++) await page.keyboard.press('Tab');

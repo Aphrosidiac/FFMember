@@ -32,7 +32,7 @@ export function initFigures() {
       const c = (screenY - vh / 2) / (vh / 2); // -1 top … 1 bottom
       const d = Math.min(Math.abs(c), 1.6);
       const bow = Math.cos(Math.min(d, 1) * Math.PI / 2); // 1 at centre, 0 at edges
-      const x = it.side * bow * Math.min(innerWidth * 0.07, 96);
+      const x = it.side * bow * Math.min(innerWidth * (innerWidth < 700 ? 0.05 : 0.07), 96);
       it.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${(0.82 + bow * 0.28).toFixed(3)})`;
       it.el.style.opacity = String(Math.max(0, 1 - d * 0.75).toFixed(3));
       it.el.style.filter = d > 0.35 && !reduced ? `blur(${((d - 0.35) * 5).toFixed(2)}px)` : 'none';

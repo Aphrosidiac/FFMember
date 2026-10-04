@@ -273,3 +273,49 @@ mark, a hairline and a curtain. Now:
   between widths. Measured in Chrome at 1920: headline, rotator line and button all centre at 960.
 
 `tools/check.mjs` 159/159.
+
+## 2026-10-05 — phone pass: every page at 390×700, 360×640 and 844×390
+
+Fakhrul asked for a complete mobile pass. Walked every page in WebKit (iPhone 13 descriptor) at a
+real Safari height (390×700), a small phone (360×640) and a phone on its side (844×390), half a
+screen per stop, plus the menu, both dialogs and the FAQ (`tools/mobile_tour.mjs`). Defects and causes:
+
+1. **Hero plinth wider than the screen, CTA on the chrome.** Portrait used a fixed camera, so the
+   plinth ran off both edges, the bright chrome band sat behind "Become a member" and the card hung
+   far above its riser. `hero.js` now fits the card and plinth into the band between the headline and
+   the CTA, measured from the page (`offsetTop`, so the entrance transforms don't skew it): the camera
+   backs off until the card is ~66% of the width and the set fits, the plinth narrows to 90% of the
+   screen, and the look-at height is solved so the set is centred in the band. Desktop is unchanged.
+2. **Plinth front blown white on phones.** On desktop it is only grey because `.hero__shade` falls
+   across it; in portrait the plinth sits above the shade. The shade is now pinned to the plinth's
+   projected front edge in portrait (`.hero__shade.is-fit`).
+3. **Nav popped back after every swipe** (desktop wheel too). Lenis emits once more at the same
+   position 400 ms after a native scroll stops (and on smooth-scroll completion); `nav.js` treated
+   any non-downward emit as "show". The nav now changes only on a real move: hides going down, returns
+   going up. `check.mjs` scrolls up a little before using the nav, as a reader would.
+4. **Covers: the active step was hidden under the plate.** Stacked, the plate sticks at the top and
+   covers the middle of the screen, which is where the active line was. On a phone the line now sits
+   just under the plate. Activation is read on scroll (last step whose top has passed the line), not a
+   2px observer band, which a fast flick or anchor jump skipped. Rows also showed above the stuck plate
+   and through its rounded corners: a sticky bone band covers the top, a bone box-shadow the corners.
+5. **Covers in landscape:** a full-width plate was taller than the screen, hiding the list. A phone
+   on its side keeps the two-column layout; only portrait (or ≤600px) stacks.
+6. **Figures sliced by the centre list.** `.figures__list` stretched to the full width, so its bone
+   backdrop cut figures in half where they crossed its band (on desktop too). It is now sized to its
+   text; on phones the columns sit clear of it and bow less.
+7. **Reveal ended as a small strip.** The opened window held a 16:9 plate in a tall screen; portrait
+   now uses a 4:5 crop of the screenshot.
+8. **Studio plates in Safari.** `height: 100%` inside the aspect-ratio figure ran past its padding in
+   WebKit: sides cropped (LEWIX lost its L) and the bottom padding gone. The image now sets the height
+   (`aspect-ratio: 16 / 9`). Work meta stacks on phones instead of wrapping unevenly.
+9. **Small fixes.** Logo lockup wrapped to two lines at 360 (the "by FF Dev Studio" half hides below
+   380px); join dialog no longer focuses a field on touch, which threw the keyboard over it on open
+   (the title takes focus); FAQ groups tighter on phones; legal dates don't break; gutters, intro and
+   footer respect the notch / home-indicator safe areas (`viewport-fit=cover`).
+10. **Landscape (≤500px tall).** Hero fits the screen (no 600px minimum), heading scale follows the
+    short side, the hero card is fitted like portrait (CTA over the plinth front, as on desktop), the
+    globe sits lower so it clears its copy, the tube card rides in the upper half above its copy.
+
+`tools/check.mjs` 159/159. Desktop re-shot at 1440×900 (hero, covers, figures, studio): unchanged
+except the figures and studio fixes above. Proof: 55 s WebKit scroll at 390×700
+(`docs/qa/shots/mobile-after/ff-member-phone-390x700.mp4`, git-ignored).

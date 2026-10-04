@@ -34,6 +34,9 @@
   --t-micro: 1.1rem;
 
   --gutter: clamp(1.6rem, 1.2rem + 0.6vw, 2.4rem);
+  /* the gutter, widened past a phone's notch in landscape (viewport-fit=cover) */
+  --pad-l: max(var(--gutter), env(safe-area-inset-left, 0px));
+  --pad-r: max(var(--gutter), env(safe-area-inset-right, 0px));
   --section: clamp(9rem, 5rem + 9vw, 20rem);
   --radius: 1.2rem;
   --radius-lg: 2.4rem;
@@ -41,6 +44,17 @@
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* a phone on its side: headings sized to the short screen, not the wide one */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --t-display: clamp(3.6rem, 11vh, 5.2rem);
+    --t-h1: clamp(2.8rem, 8.5vh, 4rem);
+    --t-h2: clamp(2.6rem, 7.5vh, 3.6rem);
+    --t-lead: 1.6rem;
+    --section: 8rem;
+  }
 }
 
 *,
@@ -364,7 +378,7 @@ ol {
 
 .wrap {
   width: 100%;
-  padding-inline: var(--gutter);
+  padding-inline: var(--pad-l) var(--pad-r);
 }
 
 /* ---------- nav ---------- */
@@ -384,7 +398,7 @@ ol {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   height: 8rem;
-  padding-inline: var(--gutter);
+  padding-inline: var(--pad-l) var(--pad-r);
   color: var(--nav-fg);
   pointer-events: none;
   transition: transform 0.6s var(--ease-out), color 0.4s;
@@ -418,6 +432,7 @@ ol {
   font-size: 1.5rem;
   font-weight: 500;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 .nav.is-scrolled .nav__logo {
   background: var(--glass);
@@ -545,7 +560,7 @@ ol {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 11rem var(--gutter) calc(var(--gutter) + env(safe-area-inset-bottom));
+    padding: 11rem var(--pad-r) calc(var(--gutter) + env(safe-area-inset-bottom)) var(--pad-l);
     background: var(--ink);
     clip-path: inset(0 0 100% 0);
     visibility: hidden;
@@ -578,12 +593,18 @@ ol {
     width: 100%;
   }
 }
+/* a small phone has no room for the lockup's second half beside the menu button */
+@media (max-width: 379px) {
+  .nav__logo span {
+    display: none;
+  }
+}
 
 /* ---------- footer ---------- */
 
 .footer {
   position: relative;
-  padding: var(--section) var(--gutter) 3rem;
+  padding: var(--section) var(--pad-r) calc(3rem + env(safe-area-inset-bottom, 0px)) var(--pad-l);
   background: var(--coal);
   overflow: clip;
 }

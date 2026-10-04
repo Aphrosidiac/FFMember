@@ -11,8 +11,10 @@ export function initNav() {
   const onScroll = (y) => {
     nav.classList.toggle('is-scrolled', y > 40);
     const open = document.documentElement.classList.contains('menu-open');
-    if (!open) nav.classList.toggle('is-hidden', y > 200 && y > last + 2);
-    if (y < last - 2) nav.classList.remove('is-hidden');
+    // Only a real move changes it: Lenis emits once more with the same position 400 ms after a
+    // native (touch) scroll stops, which used to bring the nav back after every swipe.
+    if (!open && y > 200 && y > last + 2) nav.classList.add('is-hidden');
+    if (y < last - 2 || y <= 200) nav.classList.remove('is-hidden');
     last = y;
     update();
   };
