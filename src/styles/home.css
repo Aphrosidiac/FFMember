@@ -122,112 +122,108 @@
 /* ---------- 02 globe ---------- */
 
 .globe {
+  /* one viewport tall, pinned by globe.js for 2.5 viewports with no spacing: the tube scrolls up
+     underneath while the planet turns, shrinks and fades on top of it */
   position: relative;
-  height: 190svh;
-  background: var(--ink);
+  z-index: 3;
+  pointer-events: none;
 }
-.globe__stage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: clip;
-}
-.globe__gl {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+.globe__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
 }
 .globe__head {
-  /* outside the sticky stage: the copy scrolls through at page speed while the planet holds */
-  position: absolute;
-  inset: 0 0 auto;
-  z-index: 1;
-  display: grid;
-  justify-items: center;
-  gap: 2.4rem;
-  padding-top: 18svh;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: min(72rem, 85vw);
+  padding-top: 14vh;
   text-align: center;
-}
-.globe__head .h1 {
-  max-width: 18ch;
 }
 .globe__head .lead {
   max-width: 46ch;
+  padding: 2vh 0 4vh;
+}
+.globe__stage {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+.globe__gl {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .globe__toasts {
   position: absolute;
+  bottom: 0;
   left: 50%;
-  top: 74%;
-  width: 0;
-  height: 0;
+  width: 114vmin;
+  height: 42vmin;
+  transform: translateX(-50%);
 }
 .globe__toasts li {
   position: absolute;
-  left: calc(var(--x) * 1vw);
-  top: calc(var(--y) * 1vh);
-  translate: -50% -50%;
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  padding: 1rem 1.6rem 1rem 1.1rem;
+  gap: 0.85rem;
+  padding: 1.5rem 2.35rem;
   border-radius: var(--pill);
   white-space: nowrap;
-  font-size: 1.4rem;
-  background: rgba(36, 36, 33, 0.6);
-  box-shadow: inset 0 0 0 1px var(--line);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  font-size: 1.5rem;
+  background: rgba(18, 25, 28, 0.52);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
+.globe__toasts .is-1 { left: 5%; top: 30%; }
+.globe__toasts .is-2 { right: 30%; bottom: 25%; }
+.globe__toasts .is-3 { right: 15%; top: 10%; }
 .globe__toasts i {
   position: relative;
-  width: 1.8rem;
-  height: 1.8rem;
+  flex: none;
+  width: 2.15rem;
+  height: 2.15rem;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px var(--line-strong);
+  box-shadow: inset 0 0 0 1.4px var(--line-strong);
 }
 .globe__toasts i::after {
   content: '';
   position: absolute;
-  left: 0.55rem;
-  top: 0.5rem;
-  width: 0.7rem;
-  height: 0.4rem;
+  left: 0.66rem;
+  top: 0.6rem;
+  width: 0.8rem;
+  height: 0.45rem;
   border: solid var(--lime);
   border-width: 0 0 1.5px 1.5px;
   transform: rotate(-45deg);
 }
-@media (max-width: 860px) {
-  .globe {
-    height: 200svh;
-  }
-  .globe__toasts {
-    left: var(--gutter);
-    right: var(--gutter);
-    top: auto;
-    bottom: 8svh;
-    width: auto;
-    height: auto;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.8rem;
-  }
-  .globe__toasts li {
-    position: static;
-    translate: none;
-    font-size: 1.25rem;
-  }
+@media (max-width: 992px) {
+  .globe__head { max-width: 100%; padding-inline: var(--gutter); }
+  .globe__toasts { width: 100%; height: 50vh; max-height: 60vmin; }
+}
+@media (max-width: 772px) {
+  .globe__toasts { height: 45vh; max-height: 80vmin; }
+}
+@media (max-width: 576px) {
+  .globe__toasts { max-height: 120vmin; }
+  .globe__toasts li { font-size: 1.3rem; padding: 1.2rem 1.8rem; }
+  .globe__toasts .is-1 { left: auto; right: 3%; top: 1%; }
+  .globe__toasts .is-2 { right: auto; left: 2%; top: 30%; bottom: auto; }
+  .globe__toasts .is-3 { left: auto; right: 10%; bottom: 40%; top: auto; }
 }
 
 /* ---------- 03 tube ---------- */
 
 .tube {
-  /* transparent, and slides up over the globe's last stretch: the edge-on card rises in front
-     of the sinking planet; the tiles and the dark vignette only arrive once the planet has gone */
+  /* transparent, and scrolls up underneath the pinned globe: the edge-on card rises behind the
+     shrinking planet; the tiles and the dark vignette only arrive once the planet has gone */
   position: relative;
   z-index: 2;
-  margin-top: -75svh;
   height: 320svh;
 }
 .tube__stage {

@@ -73,19 +73,20 @@
 
       <!-- 02 · Globe -->
       <section class="globe" id="care" aria-labelledby="globe-title">
-        <div class="globe__stage" data-globe-stage>
-          <canvas class="globe__gl" data-globe-gl aria-hidden="true"></canvas>
-          <ul class="globe__toasts" data-globe-chips aria-label="Work a plan does in the background">
-            <li style="--x: -30; --y: -4"><i aria-hidden="true"></i>Backup completed</li>
-            <li style="--x: 24; --y: -12"><i aria-hidden="true"></i>SSL certificate renewed</li>
-            <li style="--x: 6; --y: 10"><i aria-hidden="true"></i>Security update applied</li>
-            <li style="--x: -12; --y: 24"><i aria-hidden="true"></i>Price change published</li>
-          </ul>
+        <div class="globe__content">
+          <div class="globe__head" data-globe-head>
+            <h2 class="h1" id="globe-title">Built in Kuala Lumpur. Kept online everywhere.</h2>
+            <p class="lead">Hosting, SSL, a CDN, monitoring, backups and security updates come with every plan — so the site keeps working while you get on with the business.</p>
+            <a class="btn" href="#plans" data-scroll>Compare the plans</a>
+          </div>
         </div>
-        <div class="globe__head wrap" data-globe-a>
-          <h2 class="h1" id="globe-title">Built in Kuala Lumpur. Kept online everywhere.</h2>
-          <p class="lead">Hosting, SSL, a CDN, monitoring, backups and security updates come with every plan — so the site keeps working while you get on with the business.</p>
-          <a class="btn" href="#plans" data-scroll>Compare the plans</a>
+        <div class="globe__stage">
+          <canvas class="globe__gl" data-globe-gl aria-hidden="true"></canvas>
+          <ul class="globe__toasts" aria-label="Work a plan does in the background">
+            <li class="is-1" data-globe-chip><i aria-hidden="true"></i>Backup completed</li>
+            <li class="is-2" data-globe-chip><i aria-hidden="true"></i>Security update applied</li>
+            <li class="is-3" data-globe-chip><i aria-hidden="true"></i>SSL certificate renewed</li>
+          </ul>
         </div>
       </section>
 

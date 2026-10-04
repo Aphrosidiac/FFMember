@@ -144,3 +144,26 @@ Verified with zoomed crops in real Chrome. `tools/check.mjs`: see `docs/qa/check
 
 `tools/check.mjs`: 159/159. Real Chrome: `drawn=1`, quality full, intro cleared, nav and headline
 at opacity 1.
+
+## 2026-10-04 — globe rebuilt to the reference's motion
+
+Fakhrul compared the globe with moto-card.com side by side and asked for the same animation.
+Measured with `tools/globe_strip.mjs` (both sites, same scroll offsets, 1440×900 and 390×844), then
+rebuilt `src/js/gl/globe.js`:
+- **Shading.** Physically lit sphere on `WebGPURenderer` (WebGL2 backend) after the MIT three.js TSL
+  earth example: day map, night lights by sun angle, cloud whitening, bump from relief and clouds,
+  glossier oceans, an atmosphere crest masked to the upper half, a back-face glow shell at 1.04.
+  ACES at exposure 1.16, sun at (0.26, 1.39, −3) intensity 6.
+- **Framing.** Camera fov 25 at (0, 0.2, 5); planet at y −1.32, scale 1.3; idle spin 0.025 rad/s on
+  the clock from load.
+- **Scroll.** The section is one viewport tall and pinned for 2.5 viewports with no spacing, so the
+  tube scrolls up underneath (the tube's −75svh overlap is gone). One scrubbed timeline (scrub 1):
+  turn −π/1.4 → −π/5 over the first half, shrink to 40% (power2.out) from 0.1, fade out 0.2 → 0.35,
+  header lifts −120%, chips drop out in random order and are removed at 0.45.
+- **Chips.** Three, at the reference's positions and breakpoints; 5px blur on a dark teal glass.
+- **Textures.** `tools/grade_globe.py` regrades NASA sources: July 2004 Blue Marble with blue oceans
+  (December snow read as cloud), Black Marble 2016 lights over a flat dark base (the 2012 map was
+  blue-tinted and blurry). Bases moved to `docs/sources/globe-base/`.
+
+The globe chunk grows to 590 kB (168 kB gzip) because it brings in the node renderer; it is
+lazy-loaded with the section. `tools/check.mjs`: 159/159.

@@ -71,8 +71,8 @@ async function bootHome() {
     if (globeCanvas) {
       import('./gl/globe.js').then((m) => m.initGlobe(globeCanvas, {
         section: document.querySelector('.globe'),
-        chips: document.querySelector('[data-globe-chips]'),
-        copyA: document.querySelector('[data-globe-a]'),
+        header: document.querySelector('[data-globe-head]'),
+        chips: document.querySelectorAll('[data-globe-chip]'),
       })).catch((e) => console.warn('[globe]', e));
     }
     const tubeCanvas = document.querySelector('[data-tube-gl]');

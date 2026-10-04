@@ -13,7 +13,7 @@ export async function initReveals(root = document) {
   await document.fonts.ready;
   // Headings: lines rise out of their masks.
   for (const h of root.querySelectorAll('.h1, .h2:not([data-no-split])')) {
-    if (h.closest('[data-globe-a], [data-tube-copy], [data-reveal]')) continue;
+    if (h.closest('[data-globe-head], [data-tube-copy], [data-reveal]')) continue;
     const split = new SplitText(h, { type: 'lines', mask: 'lines', autoSplit: true,
       onSplit: (self) => gsap.from(self.lines, {
         yPercent: 110, duration: 1.2, ease: 'power4.out', stagger: 0.09,

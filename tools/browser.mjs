@@ -29,7 +29,7 @@ export async function launch() {
   return pw.chromium.launch({
     headless: true,
     // WebGL via SwiftShader so three.js / R3F / shader sites render; autoplay so hero films play.
-    args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
+    args: [...(process.env.GPU ? ['--use-angle=metal', '--enable-gpu', '--ignore-gpu-blocklist'] : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']),
       '--autoplay-policy=no-user-gesture-required'],
   });
 }
