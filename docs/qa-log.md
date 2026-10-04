@@ -296,7 +296,9 @@ screen per stop, plus the menu, both dialogs and the FAQ (`tools/mobile_tour.mjs
 4. **Covers: the active step was hidden under the plate.** Stacked, the plate sticks at the top and
    covers the middle of the screen, which is where the active line was. On a phone the line now sits
    just under the plate. Activation is read on scroll (last step whose top has passed the line), not a
-   2px observer band, which a fast flick or anchor jump skipped. Rows also showed above the stuck plate
+   2px observer band, which a fast flick or anchor jump skipped. (Revised after the deploy: stacked,
+   the active step is the first one whose title is still visible under the plate, so the frame always
+   matches the row you can read; the first rule let the active title slide under the plate.) Rows also showed above the stuck plate
    and through its rounded corners: a sticky bone band covers the top, a bone box-shadow the corners.
 5. **Covers in landscape:** a full-width plate was taller than the screen, hiding the list. A phone
    on its side keeps the two-column layout; only portrait (or ≤600px) stacks.
