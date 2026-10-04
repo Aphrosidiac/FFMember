@@ -14,8 +14,14 @@
     <meta name="theme-color" content="#0b0b0a" />
     <link rel="icon" href="/brand/ff-favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/InstrumentSans-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <style>
+      /* first paint: dark page and loader before the stylesheet arrives (the loader's parts show once it has) */
+      html { background: #0b0b0a; }
+      .intro { position: fixed; inset: 0; z-index: 100; background: #0b0b0a; }
+      .intro > * { visibility: hidden; }
+    </style>
     <script>
-      try { if (sessionStorage.getItem('ff-member-intro') === '1') document.documentElement.classList.add('intro-seen'); } catch (e) {}
+      try { if (sessionStorage.getItem('ff-member-intro') === '1' && !/[?&]intro\b/.test(location.search)) document.documentElement.classList.add('intro-seen'); } catch (e) {}
       if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     </script>
     <script type="application/ld+json">
@@ -40,12 +46,25 @@
     <a class="skip" href="#main">Skip to content</a>
 
     <div class="intro" aria-hidden="true">
-      <div class="intro__mark"><img src="/brand/ff-mark-white.svg" alt="" width="194" height="72" /></div>
-      <div class="intro__meta">
-        <span>FF Member</span>
-        <span><span data-clock></span> Kuala Lumpur</span>
+      <div class="intro__veil"></div>
+      <div class="intro__stage">
+        <div class="intro__card" data-intro-card>
+          <span class="intro__etch intro__etch--member">MEMBER</span>
+          <svg class="intro__mark" viewBox="0 0 194 72"><g fill="currentColor"><path d="M0 72 16 0h14L14 72Z"/><path d="M24 72 40 0h14L38 72Z"/><path d="M72 0h54v15H88v13h32v14H88v30H72Z"/><path d="M140 0h54v15h-38v13h32v14h-32v30h-16Z"/></g></svg>
+          <span class="intro__polish" data-intro-polish><span data-intro-polish-in>
+            <svg class="intro__mark" viewBox="0 0 194 72"><defs><linearGradient id="intro-chrome" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="0.42" stop-color="#a9a69e"/><stop offset="0.55" stop-color="#f6f3ec"/><stop offset="1" stop-color="#7d7b75"/></linearGradient></defs><g fill="url(#intro-chrome)"><path d="M0 72 16 0h14L14 72Z"/><path d="M24 72 40 0h14L38 72Z"/><path d="M72 0h54v15H88v13h32v14H88v30H72Z"/><path d="M140 0h54v15h-38v13h32v14h-32v30h-16Z"/></g></svg>
+          </span></span>
+          <span class="intro__chip"></span>
+          <span class="intro__etch intro__etch--studio">FF DEV STUDIO</span>
+          <span class="intro__etch intro__etch--city">KUALA LUMPUR</span>
+          <span class="intro__sheen"></span>
+        </div>
       </div>
-      <div class="intro__bar"><i></i></div>
+      <div class="intro__meta">
+        <p class="intro__status" data-intro-status><i></i><span>Issuing your member card</span></p>
+        <span class="intro__count" data-intro-count>000</span>
+      </div>
+      <div class="intro__bar"><i data-intro-bar></i></div>
     </div>
 
     <!-- @include nav -->

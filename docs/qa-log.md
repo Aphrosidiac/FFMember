@@ -241,3 +241,35 @@ softboxes it became one light-grey sheet with white paint on it. Contrast now co
   checker's hero-drawn and price-tween checks failed. `tools/bake_card.mjs` now runs
   `paintCardFaces()` in a browser and saves six maps to `public/card/` (185 kB); the site only
   loads them. Re-run it after changing the card design.
+
+## 2026-10-04 — intro: "issuing your member card"
+
+Fakhrul asked for a startup screen that is cool and makes sense with the site. The old one was the
+mark, a hairline and a curtain. Now:
+- A DOM card drawn like the 3D one (black body, etched MEMBER / FF DEV STUDIO / KUALA LUMPUR, chip)
+  rises in. Its //FF polishes from etched to chrome left to right with progress.
+- Progress is real: it runs to 86% on a clock, then waits for the hero scene to draw (or 5 s).
+- A status line ticks through what membership covers (Hosting, SSL, CDN, Backups, Uptime monitoring,
+  Security updates · ready), with a 000–100 counter and the hairline.
+- At 100 a light sweeps the card and it reads "Card issued". The hero exposes `placeCard()`: it skips
+  its own entrance and reports where the 3D card sits on screen. The DOM card flies there, the veil
+  lifts and the DOM card fades over the 3D card. Layout matches `paintCardFaces` so they line up.
+- Transforms and opacity only; capped at 9 s. Filmed with `tools/intro_video.mjs`; still screenshots
+  stall for ~3 s each while WebGL compiles, so stills cannot film it.
+
+## 2026-10-04 — load cover on every visit; rotator centring
+
+- **Empty hero on refresh.** Repeat visits skipped the intro, so the hero text showed over a blank
+  stage while the scene built. Every load now gets the intro: the full one on first visit, a quick
+  one after ("Welcome back") that lasts only as long as loading. While waiting, the counter keeps
+  creeping to 99 and a CSS light glides across the card (compositor-driven, so it keeps moving while
+  shader compiles block the main thread). Inline head styles paint the page and loader dark at once.
+  `?intro` forces the full version.
+- **Controls waited for the intro.** Plans, figures, marquees etc. were initialised after the intro
+  resolved, so the billing toggle did nothing for the first seconds; they now start immediately.
+  Dialogs add `is-open` after a style flush instead of on the next frame.
+- **"It covers …" off centre.** The rotating words share a grid cell, so the box was always as wide
+  as "small changes." and short words sat left. The box now takes the shown word's width and eases
+  between widths. Measured in Chrome at 1920: headline, rotator line and button all centre at 960.
+
+`tools/check.mjs` 159/159.

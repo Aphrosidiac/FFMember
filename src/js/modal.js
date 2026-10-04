@@ -24,11 +24,12 @@ function open(modal, from) {
   opener = from || document.activeElement;
   modal.hidden = false;
   document.querySelectorAll('body > :not(.modal):not(script)').forEach((n) => (n.inert = true));
-  requestAnimationFrame(() => {
-    modal.classList.add('is-open');
-    const first = modal.querySelector('input, select, [data-plan-join], [data-done-title]') || focusables(modal)[0];
-    first?.focus({ preventScroll: true });
-  });
+  // flush styles so the closed state is committed and the entrance still transitions, without
+  // waiting a frame (a busy WebGL frame can hold rAF long enough to lose the open state)
+  void modal.offsetWidth;
+  modal.classList.add('is-open');
+  const first = modal.querySelector('input, select, [data-plan-join], [data-done-title]') || focusables(modal)[0];
+  first?.focus({ preventScroll: true });
   lockScroll(true);
   openModal = modal;
 }

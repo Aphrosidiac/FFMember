@@ -8,7 +8,7 @@ import { Reflector } from 'three/addons/objects/Reflector.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import { gsap, ScrollTrigger, reduced, coarse } from '../motion.js';
 import { makeRenderer, fit, runWhileVisible } from './stage.js';
-import { makeCard, softboxEnvironment } from './card.js';
+import { makeCard, softboxEnvironment, CARD_W } from './card.js';
 
 const FLOOR_Y = -1.36;
 
@@ -220,5 +220,24 @@ export async function initHero(canvas) {
   };
   runWhileVisible(canvas, frame);
   frame(0);
-  return { playEnter };
+
+  // The intro hands its card to this one: skip the entrance, let two frames draw the card at rest,
+  // then report where it sits on screen (centre and projected width, in CSS px).
+  const placeCard = () => new Promise((resolve) => {
+    gsap.killTweensOf(enter);
+    enter.v = 1;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      holder.updateMatrixWorld(true);
+      const r = canvas.getBoundingClientRect();
+      const at = (x) => {
+        const v = new THREE.Vector3(x, 0, 0).applyMatrix4(card.matrixWorld).project(camera);
+        return { x: r.left + ((v.x + 1) / 2) * r.width, y: r.top + ((1 - v.y) / 2) * r.height };
+      };
+      const l = at(-CARD_W / 2);
+      const c = at(0);
+      const rr = at(CARD_W / 2);
+      resolve({ x: c.x, y: c.y, w: Math.hypot(rr.x - l.x, rr.y - l.y), tilt: Math.atan2(rr.y - l.y, rr.x - l.x) });
+    }));
+  });
+  return { playEnter, placeCard };
 }

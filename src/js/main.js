@@ -51,13 +51,8 @@ async function bootHome() {
     ? import('./gl/hero.js').then((m) => m.initHero(heroCanvas)).then((h) => (hero = h)).catch((e) => console.warn('[hero]', e))
     : Promise.resolve();
   const reveal = await heroIn(null);
-  const introDone = playIntro();
-  await Promise.race([heroReady, new Promise((r) => setTimeout(r, 2500))]);
-  await introDone;
-  // The text enters now; the 3D scene enters whenever it is ready (it can take longer on a slow GPU).
-  if (typeof reveal === 'function') reveal();
-  heroReady.then(() => hero?.playEnter?.());
-
+  // The page's own controls work from the start; only the hero entrance and the heavier scenes
+  // below the fold wait for the intro.
   initRotators();
   initMarquees();
   initPlans();
@@ -67,6 +62,14 @@ async function bootHome() {
   initLocalClock();
   initProcess();
   initReveals();
+  // the intro waits for the hero scene and hands its card over to it
+  const introDone = playIntro(heroReady.then(() => hero));
+  await Promise.race([heroReady, introDone, new Promise((r) => setTimeout(r, 2500))]);
+  await introDone;
+  // The text enters now; the 3D scene enters whenever it is ready (it can take longer on a slow GPU).
+  if (typeof reveal === 'function') reveal();
+  heroReady.then(() => hero?.playEnter?.());
+
 
   if (gl) {
     const globeCanvas = document.querySelector('[data-globe-gl]');
