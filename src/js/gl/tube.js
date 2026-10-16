@@ -6,7 +6,7 @@ import { gsap, ScrollTrigger, reduced, lenis } from '../motion.js';
 import { makeRenderer, fit, runWhileVisible } from './stage.js';
 import { makeCard, studioEnvironment } from './card.js';
 
-const WORK = ['hai-awan', 'sunlight-supplies', 'lewix-ai', 'smoothsail', 'big-brain-furniture', 'ascend-peptides', 'lewix-my', 'big-brain-furniture-alt'];
+const WORK = ['hai-awan', 'sunlight-supplies', 'lewix-ai', 'smoothsail', 'ff-furniture', 'ascend-peptides', 'lewix-my', 'ff-furniture-alt'];
 
 const ROWS = 5;
 const COLS = 15;

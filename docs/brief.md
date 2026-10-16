@@ -27,7 +27,7 @@ FAQ and modal flows. Every line of code, every word and every image is FF's own 
   exclusions, client process, 30-day defect warranty) and `PhantomClone/src/data.js` (project list).
   No invented statistics, testimonials or clients.
 - **Imagery:** screenshots of FF's own client and product work (Hai Awan, Sunlight Supplies, LEWIX AI,
-  SmoothSail, Big Brain Furniture ×2, Ascend Peptides, Lewix) from PhantomClone's media. Recreation
+  SmoothSail, FF Furniture ×2, Ascend Peptides, Lewix) from PhantomClone's media. Recreation
   studies are excluded because their screenshots can contain third-party assets. Globe textures are
   NASA Visible Earth imagery (public domain). No AI-generated imagery (FF rule).
 

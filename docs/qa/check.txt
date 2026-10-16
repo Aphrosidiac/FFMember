@@ -134,7 +134,7 @@ PASS  link /legal/privacy/#email  — 200
 PASS  link /legal/privacy/#rights  — 200
 PASS  link /legal/privacy/#top  — 200
 PASS  link /404.html#main  — 200
-PASS  external links are FF-owned or contact  — mailto:hello@ffdev.studio https://ffdev.studio tel:+60139078719 https://awan.ffdev.studio/ https://ff-sunlight.pages.dev/ https://lewix.ai/ https://smoothsail.my/ https://bbf.lewix.ai/
+PASS  external links are FF-owned or contact  — mailto:hello@ffdev.studio https://ffdev.studio tel:+60139078719 https://awan.ffdev.studio/ https://ff-sunlight.pages.dev/ https://lewix.ai/ https://smoothsail.my/ https://ff-furniture.pages.dev/
 PASS  hero scene built and rendered
 PASS  yearly prices  — 590 / 1,490 / 2,990
 PASS  yearly period label  — / year
